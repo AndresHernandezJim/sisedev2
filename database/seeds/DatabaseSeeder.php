@@ -17,8 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call('UserTableSeeder');
         //agregar los roles de involucrados;
         $this->call('rolinvSeeder');
-        //agregamos los tipos de documentos
-        $this->call('tipodocumentoSeeder');
         //agregar los tipos de seguimiento de los expedientes
         $this->call('tiposeguimientoS');
         //agregar los tipos de acuerdos del sistema

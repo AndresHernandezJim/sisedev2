@@ -12,17 +12,17 @@ class acuerdotSeeder extends Seeder
     public function run()
     {
         $a=new acuerdotipo;
-        $a->Tipo="Admite";
+        $a->Tipo="Admisión de Demanda";
         $a->Descripcion="Artículo 32.- Admitida la demanda";
         $a->nivel=2;
         $a->save();
         $a=new acuerdotipo;
-        $a->Tipo="Contestacion";
+        $a->Tipo="Contestacion de Demanda";
         $a->Descripcion="";
         $a->nivel=2;
         $a->save();
         $a=new acuerdotipo;
-        $a->Tipo="Requiere";
+        $a->Tipo="Requerimeinto (Requisitos de Demanda)";
         $a->Descripcion="";
         $a->nivel=2;
         $a->save();
@@ -57,7 +57,7 @@ class acuerdotSeeder extends Seeder
         $a->nivel=2;
         $a->save();
         $a=new acuerdotipo;
-        $a->Tipo="Requeriendo el Cumplimiento de Sentencia";
+        $a->Tipo="Cumplimiento de Sentencia";
         $a->Descripcion="";
         $a->nivel=2;
         $a->save();
@@ -132,7 +132,7 @@ class acuerdotSeeder extends Seeder
         $a->nivel=1;
         $a->save();
         $a=new acuerdotipo;
-        $a->Tipo="Ácuerdo";
+        $a->Tipo="Admisión de Incidente";
         $a->Descripcion="";
         $a->nivel=2;
         $a->save();

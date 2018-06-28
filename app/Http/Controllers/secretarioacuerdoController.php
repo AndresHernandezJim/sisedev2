@@ -10,13 +10,14 @@ use App\mensajes;
 use App\Helper\filehelper;
 use App\Helper\queryhelper;
 use App\envios;
+use App\acuerdotipo;
 class secretarioacuerdoController extends Controller
 {
     public function index(Request $request){
         $id=$request->session()->get('id');
         //dd($id);
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
-        $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad);
+        $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
     	return view('secretario.home',$data);
     }
     public function notif(Request $request){
@@ -33,7 +34,7 @@ class secretarioacuerdoController extends Controller
             $k->tiempo=$hora;
         }
         $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
-            'mensajes2'=>$men
+            'mensajes2'=>$men,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get()
         );
         return view('secretario.notificaciones',$data);
     }
@@ -90,7 +91,7 @@ class secretarioacuerdoController extends Controller
             $raw=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno)as Nombreusuario");
             $data=array(
             'usuario'=>\DB::table('users as u')->join('role_user as ru','ru.user_id','u.id')->join('roles as r','ru.role_id','r.id')->select('u.id',$raw,'u.nombre','u.a_paterno','u.a_materno','u.avatar','r.descripcion','u.email')->where('u.id',$id)->first(),
-            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad
+            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get()
             );
             return view('perfil',$data);
         }
@@ -102,10 +103,10 @@ class secretarioacuerdoController extends Controller
         $data=array(
             'actuario'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',5)->get(),
             'proyectista'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',4)->get(),
-            'tipoacuerdo'=>\DB::table('acuerdotipo')->where('nivel','2')->where('id','<>',11)->where('id','<>',8)->select('id','Tipo')->get(),
+            'tipoacuerdo'=>\DB::table('acuerdotipo')->where('nivel','2')->where('estatus','<>',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),
             'expediente'=>\DB::select("select  * from v_expedientes2  v join v_entradasalida2 v2 on v.id=v2.id_exp join envios e on e.id_exp=v.id where id_receptor=? order by v.id desc",[$id]),
             'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,
-            'rolid'=>$id
+            'rolid'=>$id,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get()
         );
         //dd($data);
         return view('secretario.acuerdos.acuerdo',$data);
@@ -123,7 +124,7 @@ class secretarioacuerdoController extends Controller
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
         $data=array('exp'=>\DB::select('select * from v_seguimiento'),
                 'rol'=>'secretarioacuerdo',
-                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad);
+                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
         return view('secretario.seguimiento',$data);
     }
     public function getseguimiento(Request $request){
@@ -310,5 +311,41 @@ class secretarioacuerdoController extends Controller
         $m->updated_at=null;
         $m->save();
        return json_encode($data);            
+    }
+    public function resdocumento(Request $request){
+        //return json_encode($request->all());
+       if($d=\DB::table('acuerdotipo')->where('id',$request->id)->update(['estatus'=>1])){
+        $data=array('mensaje'=>"El tipo de documento se reestablecio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
+        return json_encode($data);
+       }
+    }
+    public function deldocumento(Request $request){
+        //return json_encode($request->all());
+        if($d=\DB::table('acuerdotipo')->where('id',$request->id)->update(['estatus'=>0])){
+        $data=array('mensaje'=>"El tipo de documento se reestablecio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
+        return json_encode($data);
+       }
+    }
+    public function adddocumento(Request $request){
+        //return json_encode($request->all());
+        $a=new acuerdotipo;
+        $a->Tipo=$request->tipo;
+        $a->Descripcion=" ";
+        $a->nivel=2;
+        $a->estatus=1;
+        $a->save();
+        $data=array('mensaje'=>"El tipo de documento se añadio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
+        return json_encode($data);
+    }
+    public function gettipodoc(Request $request){
+        $d=\DB::table('acuerdotipo')->select('Tipo')->where('id',$request->id)->first();
+        $d=$d->Tipo;
+        return json_encode($d);
+    }
+    public function actualizartipo(Request $request){
+        if($a=\DB::table('acuerdotipo')->where('id',$request->id)->update(['Tipo'=>$request->tipo])){
+            $data=array('mensaje'=>"El tipo de documento se actualizó de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
+            return json_encode($data);
+        }
     }
 }

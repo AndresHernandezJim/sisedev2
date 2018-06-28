@@ -10,13 +10,14 @@ use App\seguimiento;
 use App\envios;
 use App\anexo;
 use App\Helper\filehelper;
+use App\acuerdotipo;
 
 class actuarioController extends Controller
 {
     public function index(Request $request){
         $id=$request->session()->get('id');
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
-         $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad);
+         $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
     	return view('actuario.home',$data);
     }
     public function acuerdos(Request $request){
@@ -29,7 +30,8 @@ class actuarioController extends Controller
             'tipoacuerdo'=>\DB::table('acuerdotipo')->where('nivel','2')->where('id','<>',11)->where('id','<>',8)->select('id','Tipo')->get(),
             'expediente'=>\DB::select("select * from v_expedientes3 where id in(select id_exp as id from envios where id_receptor=?)",[$id]),
             'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,
-            'rolid'=>$id
+            'rolid'=>$id,
+            'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get()
         );
     	return view('actuario.acuerdos',$data);
     }
@@ -47,7 +49,7 @@ class actuarioController extends Controller
             $k->tiempo=$hora;
         }
         $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
-            'mensajes2'=>$men
+            'mensajes2'=>$men,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get()
         );
     	return view('actuario.notificaciones',$data);
     }
@@ -60,7 +62,7 @@ class actuarioController extends Controller
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
         $data=array('exp'=>\DB::select('select * from v_seguimiento'),
                 'rol'=>'actuario',
-                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad);
+                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
     	return view('actuario.seguimiento',$data);
     }
     public function getseguimiento(Request $request){
@@ -130,13 +132,13 @@ class actuarioController extends Controller
             $raw=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno)as Nombreusuario");
             $data=array(
             'usuario'=>\DB::table('users as u')->join('role_user as ru','ru.user_id','u.id')->join('roles as r','ru.role_id','r.id')->select('u.id',$raw,'u.nombre','u.a_paterno','u.a_materno','u.avatar','r.descripcion','u.email')->where('u.id',$id)->first(),
-            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad
+            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get()
             );
              //dd($data);
             return view('perfil',$data);
         }
     }
-     public function recuperar(Request $request){
+    public function recuperar(Request $request){
         $raw1=\DB::raw('DATE_FORMAT(a.FechaUp, "%d-%m-%Y") as FechaUp,a.PathAnexo,a.Folio, a.NomFile, act.Tipo');
         $data=array(
            'anexos'=>\DB::table('anexopdf as a')->join('acuerdotipo as act','act.id','a.id_Tipo')
@@ -145,10 +147,8 @@ class actuarioController extends Controller
         return json_encode($data);
     }
     public function getinvolved(Request $request){
-        $demandante=\DB::select("select  e.id,u2.id as id_demandante, concat(u2.nombre,' ',u2.a_paterno,' ',u2.a_materno) as nombre, u2.email, i.rol from expediente e
-join users u2 on u2.id=e.id_demandante join involucrados i on i.id_exp=e.id where i.rol=1 and e.id=?;",[$request->id]);
-        $demandado=\DB::select("select  e.id,i2.user_id as id_demandado, i2.razon_social as nombre, u2.email, i.rol from expediente e
-join users u2 on u2.id=e.id_demandado join involucrados i on i.id_exp=e.id join institucion i2 on i2.user_id=u2.id where i.rol=2 and e.id=?",[$request->id]);
+        $demandante=\DB::select("select  e.id,u2.id as id_demandante, concat(u2.nombre,' ',u2.a_paterno,' ',u2.a_materno) as nombre, u2.email, i.rol from expediente e join users u2 on u2.id=e.id_demandante join involucrados i on i.id_exp=e.id where i.rol=1 and e.id=?;",[$request->id]);
+        $demandado=\DB::select("select  e.id,i2.user_id as id_demandado, i2.razon_social as nombre, u2.email, i.rol from expediente e join users u2 on u2.id=e.id_demandado join involucrados i on i.id_exp=e.id join institucion i2 on i2.user_id=u2.id where i.rol=2 and e.id=?",[$request->id]);
         $data=array("demandante"=>$demandante,"demandado"=>$demandado);
         return json_encode($data);
     }
@@ -243,5 +243,41 @@ join users u2 on u2.id=e.id_demandado join involucrados i on i.id_exp=e.id join 
         $m->updated_at=null;
         $m->save();
         return redirect('/actuario/expedientes')->with('exito2',true);
+    }
+    public function resdocumento(Request $request){
+        //return json_encode($request->all());
+       if($d=\DB::table('acuerdotipo')->where('id',$request->id)->update(['estatus'=>1])){
+        $data=array('mensaje'=>"El tipo de documento se reestablecio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
+        return json_encode($data);
+       }
+    }
+    public function deldocumento(Request $request){
+        //return json_encode($request->all());
+        if($d=\DB::table('acuerdotipo')->where('id',$request->id)->update(['estatus'=>0])){
+        $data=array('mensaje'=>"El tipo de documento se reestablecio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
+        return json_encode($data);
+       }
+    }
+    public function adddocumento(Request $request){
+        //return json_encode($request->all());
+        $a=new acuerdotipo;
+        $a->Tipo=$request->tipo;
+        $a->Descripcion=" ";
+        $a->nivel=3;
+        $a->estatus=1;
+        $a->save();
+        $data=array('mensaje'=>"El tipo de documento se reestablecio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
+        return json_encode($data);
+    }
+    public function gettipodoc(Request $request){
+        $d=\DB::table('acuerdotipo')->select('Tipo')->where('id',$request->id)->first();
+        $d=$d->Tipo;
+        return json_encode($d);
+    }
+    public function actualizartipo(Request $request){
+        if($a=\DB::table('acuerdotipo')->where('id',$request->id)->update(['Tipo'=>$request->tipo])){
+            $data=array('mensaje'=>"El tipo de documento se actualizó de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
+            return json_encode($data);
+        }
     }
 }

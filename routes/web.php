@@ -10,6 +10,11 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'oficialpartes'], function(){
 	Route::group(['prefix'=>'oficialpartes'],function(){
 		Route::get('home','oficialPartesController@index');
+		Route::get('eliminardocumento','oficialPartesController@deldocumento');
+		ROute::get('restaurardocumento','oficialPartesController@resdocumento');
+		Route::get('agregardocumento','oficialPartesController@adddocumento');
+		Route::get('gettipodoc','oficialPartesController@gettipodoc');
+		Route::get('actualizartipo','oficialPartesController@actualizartipo');
 		Route::group(['prefix'=>'demanda'],function(){
 			Route::get('','oficialPartesController@demandas');
 			Route::get('recuperar','oficialPartesController@recuperar');
@@ -49,6 +54,11 @@ Route::group(['middleware'=>'proyectista'],function(){
 //middleware para actuario
 Route::group(['middleware'=>'actuario'],function(){
 	Route::group(['prefix'=>'actuario'],function(){
+		Route::get('eliminardocumento','actuarioController@deldocumento');
+		ROute::get('restaurardocumento','actuarioController@resdocumento');
+		Route::get('agregardocumento','actuarioController@adddocumento');
+		Route::get('gettipodoc','actuarioController@gettipodoc');
+		Route::get('actualizartipo','actuarioController@actualizartipo');
 		Route::get('home','actuarioController@index');
 		Route::get('expedientes','actuarioController@acuerdos');
 		Route::get('expedientes/recuperar','actuarioController@recuperar');
@@ -64,6 +74,11 @@ Route::group(['middleware'=>'actuario'],function(){
 //middleware para secretariodeacuerds
 Route::group(['middleware'=>'secretarioacuerdo'],function(){
   	Route::group(['prefix'=>'secretarioacuerdo'],function(){
+  		Route::get('eliminardocumento','secretarioacuerdoController@deldocumento');
+		ROute::get('restaurardocumento','secretarioacuerdoController@resdocumento');
+		Route::get('agregardocumento','secretarioacuerdoController@adddocumento');
+		Route::get('gettipodoc','secretarioacuerdoController@gettipodoc');
+		Route::get('actualizartipo','secretarioacuerdoController@actualizartipo');
   		Route::get('home','secretarioacuerdoController@index');
   		Route::get('notificaciones','secretarioacuerdoController@notif');
   		Route::post('notificaciones/update','secretarioacuerdoController@updatenotif');
