@@ -1,4 +1,3 @@
-
 function format(id_expediente,data) {
     var $table = $('<table>'), $tr, $td;
     $table.addClass('table');
@@ -126,14 +125,27 @@ function readURL(input) {
       reader.readAsDataURL(input.files[0]);
     }
 }
-function enviar1(id,s){
-    console.log(id);
-   
-    $('#id_expp').val(id);
-   
-    $('#Proyectista').modal('show');
+function enviarsecre(id,sec){
+    console.log(id,sec);
+    $.ajax({
+      type:"get",
+      url:"/actuario/getsecretario",
+      data:{id:sec},
+      success:function(data){
+        data=JSON.parse(data);
+        console.log(data);
+        $('#id_secretario').val(sec);
+        $('#namesecretario').val(data);
+        $('#id_expp').val(id);
+        $('#Esecretario').modal('show');
+      }
+    });
+    
 }	
 function notificar2(id,s){
+  var cant=$('#cantdd').val();
+  console.log(cant);
+  if(cant==0){
       $.ajax({
         type:'get',
         url:'/actuario/getinvolved',
@@ -143,70 +155,81 @@ function notificar2(id,s){
           $('#tabla1 tbody').append('<tr class="table-primary"><td>'+data.demandante[0].nombre+'</td><td>'+data.demandante[0].email+'</td><td>Demandante</td></tr><tr class="table-info"><td>'+data.demandado[0].nombre+'</td><td>'+data.demandado[0].email+'</td><td>Demandado</td></tr>');
           $('#demandado').val(data.demandado[0].id_demandado);
           $('#demandante').val(data.demandante[0].id_demandante);
+          $('#cantdd').val(1);
         },
       });
-      $('#id_exppdf').val(id);
-      $('#serie').val(s);
-      $('#agregarpdf').modal('show');
+    }
+    $('#id_exppdf').val(id);
+    $('#serie').val(s);
+    $('#agregarpdf').modal('show');
 }
-function agregar(id,s){
-    $('#id_expA').val(id);
-    $('#enviarA').modal('show');
+function agregarpdf(id,s){
+    $('#id_exps').val(id);
+    $('#seriesub').val(s);
+    $('#subirpdf').modal('show');
 }
-function notificar(){
+function notificarsubida(){
     ohSnap('El archivo se ha añadido de forma correcta',{'color':'green'});
+}
+function notificarenvio(){
+  ohSnap('El expediente ha sido retornado al Secretario de Acuerdos',{'color':'green'});
+}
+function nofiticarinvol(){
+  ohSnap('Has realizado la notificación del expediente a los involucrados',{'color':'green'});
 }
 function verificar(){
     var noti=$('#exito').val();
-    console.log("valor de la notificacion "+ noti);
+    var noti2=$('#exito2').val();
     if(noti==1){
-        notificar();
+        notificarenvio();
+    }
+    if(noti2==1){
+      notificarsubida();
     }
 }
 if (document.addEventListener){
     window.addEventListener('load',verificar(),false);
 }
 function enviaractuario(){
-    var exp=$('#id_expA').val();
-    var modulod=$('#modDestino').val();
-    var idusuario=$('#id_log2').val();
-    var seg=$('#idtiposeg').val();
-    var actuario=$('#id_ac').val();
-    var TOKEN = $('meta[name="csrf-token"]').attr('content');
-    $.ajax({
-      type:'post',
-      url:'/secretarioacuerdo/acuerdos/notificar',
-      datatype:'json',
-      data:{_token:TOKEN,id_exp:exp,id_log:idusuario,tiposeg:seg,id_ac:actuario},
-      success:function(data){
-        data=JSON.parse(data);
-        //console.log(data);
-        $('#enviarA').modal('hide');
-        ohSnap("El expeiente "+data.expediente+"/"+data.serie+" ha sido turnado al Actuario "+data.nombre+" "+data.a_paterno+" "+data.a_materno+".",{'color':'green'});
-        setTimeout(location.reload(true),5000);
-      },
-
-    });
-    
-}
-function enviarproyectista(){
     var exp=$('#id_expp').val();
     var modulod=$('#modDestino2').val();
     var idusuario=$('#id_log2').val();
     var seg=$('#idtiposeg2').val();
-    var actuario=$('#id_pr').val();
+    var secretario=$('#id_secretario').val();
+    var obs=$('#obs4').val();
     var TOKEN = $('meta[name="csrf-token"]').attr('content');
+    console.log(TOKEN);
     $.ajax({
       type:'post',
-      url:'/secretarioacuerdo/acuerdos/enviar2',
-      datatype:'json',
-      data:{_token:TOKEN,id_exp:exp,id_log:idusuario,tiposeg:seg,id_pr:actuario},
+      url:'/actuario/expedientes/retornar',
+      data:{_token:TOKEN,id_exp:exp,id_log:idusuario,tiposeg:seg,id_sec:secretario,obs:obs},
       success:function(data){
         data=JSON.parse(data);
         console.log(data);
-        $('#Proyectista').modal('hide');
-        ohSnap("El expeiente "+data.expediente+"/"+data.serie+" ha sido turnado al Proyectista "+data.nombre+" "+data.a_paterno+" "+data.a_materno+".",{'color':'green'});
+        $('#Esecretario').modal('hide');
+        ohSnap("El expeiente "+data.expediente+"/"+data.serie+" ha sido retornado al Secretario "+data.nombre+" "+data.a_paterno+" "+data.a_materno+".",{'color':'green'});
         setTimeout(location.reload(true),5000);
       },
+
     });
+}
+$('#formulariodocumento').submit(function(e){
+  e.preventDefault();
+  if(validarsubida()){
+    this.submit();
+  }
+});
+
+function validarsubida(){
+  var archivo=$('#archivopdf').val();
+  var cant=$('#notapdf > span').length;
+  if(archivo.length==0){
+    if(cant==0){
+      $('#notapdf').append("<span style='color:red;'>Debe seleccionar un archivo</span");
+    }
+      return false;
+  }else{
+    $('#notapdf >').remove();
+    return true;
+  }
 }

@@ -4,13 +4,14 @@
 <link rel="stylesheet" href="/bower_components/bootstrap-daterangepicker/daterangepicker.css">
 <link rel="stylesheet" href="/css/alert.css">
 @endsection
+@section('navegacion')
+<ol class="breadcrumb">
+    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+    <li class="active"><i class="fa fa-envelope"></i> Notificaciones</li>
+</ol>
+<br>
+@endsection
 @section('content')
-<div class="row">
-    <ol class="breadcrumb">
-        <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li class="active">Notificaciones</li>
-    </ol>
-</div>
   <div class="row">
         <div class="col-md-4 col-md-offset-8">
             <div id="ohsnap"></div>
@@ -55,7 +56,7 @@
 <script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script>
-	var table = $('#tabla').DataTable({"order": [[ 0, "desc" ]],"ordering": true,language: {
+	var table = $('#tabla').DataTable({"ordering": true,language: {
         "emptyTable": "No hay información",
 
         "info":"Del _START_ al _END_ de _TOTAL_ Notificaciones Registradas",

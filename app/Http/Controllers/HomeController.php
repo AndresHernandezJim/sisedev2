@@ -33,7 +33,7 @@ class HomeController extends Controller
         }else if($request->user()->authorizeRoles(['user', 'Proyectista'])){
             $id=$request->user()->getid();
             $request->session()->put('id',$id);
-            return view('home');
+            return redirect('/proyectista/home');
         }else if($request->user()->authorizeRoles(['user', 'Actuario'])){
             $id=$request->user()->getid();
             $request->session()->put('id',$id);
@@ -45,15 +45,15 @@ class HomeController extends Controller
         }else if($request->user()->authorizeRoles(['user', 'Usuario'])){
             $id=$request->user()->getid();
             $request->session()->put('id',$id);
-            return view('home');
+            return redirect('/user/home');
         }else if($request->user()->authorizeRoles(['user', 'Amparos'])){
             $id=$request->user()->getid();
             $request->session()->put('id',$id);
             return view('home');
         }else if($request->user()->authorizeRoles(['user', 'Institución'])){
-            return view('home');
             $id=$request->user()->getid();
             $request->session()->put('id',$id);
+            return redirect('/institucion/home');
         }
     }
     /**

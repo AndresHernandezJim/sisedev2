@@ -4,22 +4,23 @@
 <link rel="stylesheet" href="/bower_components/bootstrap-daterangepicker/daterangepicker.css">
 <link rel="stylesheet" href="/css/alert.css">
 @endsection
+@section('navegacion')
+<ol class="breadcrumb">
+    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+    <li class="active">Notificaciones</li>
+</ol>
+<br>
+@endsection
 @section('content')
 <div class="row">
-    <ol class="breadcrumb">
-        <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li class="active">Notificaciones</li>
-    </ol>
-</div>
-  <div class="row">
-        <div class="col-md-4 col-md-offset-8">
-            <div id="ohsnap"></div>
-        </div>
+    <div class="col-md-4 col-md-offset-8">
+        <div id="ohsnap"></div>
     </div>
+</div>
 <div class="row">
 	<div class="col-md-12">
 		<div class="box">
-			<div class="box-header">Notificaciones</div>
+			<div class="box-header"><center><b>Notificaciones</b></center></div>
 			<div class="box-body">
 				<div class="col-md-12">
 					<table class="table table-striped table-hover  table-bordered table-sm table-responsive" id="tabla">

@@ -5,25 +5,27 @@
 <link rel="stylesheet" href="/css/alert.css">
 <link rel="stylesheet" href="/css/zoom.css">
 @stop
+@section('navegacion')
+<ol class="breadcrumb">
+  <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+  <li class="active"><i class="fa fa-list"></i> Demandas</li>
+</ol>
+<br>
+@endsection
 @section('content')
- <ol class="breadcrumb">
-    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-    <li class="active">Demandas</li>
-  </ol>
-  <div class="row">
-        <div class="col-md-4 col-md-offset-8">
-            <div id="ohsnap"></div>
-        </div>
-    </div>
-    @if(Session::has('exito2'))
-        <input type="hidden" name="exito" value="1" id="exito">
-    @else
-        <input type="hidden" name="exito" value="0" id="exito">
-    @endif
+  @if(Session::has('exito2'))
+      <input type="hidden" name="exito" value="1" id="exito">
+  @else
+      <input type="hidden" name="exito" value="0" id="exito">
+  @endif
 <div class="box">
 	<div class="box-header">
 		<div class="col-md-10"><center><h5><strong>Demandas</strong></h5></center></div>
-		<div class="col-md-1"><a href="/oficialpartes/demanda/nueva" class="pull-right btn  btn-success">Nueva Demanda</a></div>
+    <div class="row">
+      <div class="col-md-2 col-md-offset-10">
+        <a href="/oficialpartes/demanda/nueva" class="pull-right btn  btn-success " data-toggle="popover" data-content="Registrar una nueva Demanda" rel="popover" data-placement="left" title="Nueva Demanda">Nueva Demanda</a>
+      </div>
+    </div>
 	</div>
 	<div class="box-body">
       <input type="hidden" id="rol" value="{{$rol}}">
@@ -41,20 +43,20 @@
           <tbody>
             @foreach($exp as $item)
               <tr data-child-value="{{$item->id}}">
-                <td class="details-control"><center><a class="btn btn-primary btn-small" title="Expediente {{$item->expediente}}/{{$item->serie}}">{{$item->expediente}}</a></center></td>
+                <td class="details-control"><center><a class="btn btn-primary btn-small" data-toggle="popover" data-content="Visauliza los documentos registrados en el expediente" rel="popover" placement="top" title="Expediente {{$item->expediente}}/{{$item->serie}}">{{$item->expediente}}</a></center></td>
                 <td>{{$item->fecha}}</td>
                 <td>{{$item->rdemandado}}</td>
                 <td>{{$item->demandante}} <br>{{$item->rdemandante}}</td>
                 <td >{{$item->resumen}}</td>
                 <td>
                 @if($item->status==1)
-                  <a href="#" style="width: 65px;" class="btn bg-olive btn-xs " onclick="enviara({{$item->id}});" title="Turnar el Expediente al Secretario de Acuerdos">
+                  <a href="#" style="width: 65px;" class="btn bg-olive btn-xs " onclick="enviara({{$item->id}});" data-toggle="popover" data-content="Turnar el expediente al Secretario de Acuerdos" data-placement="left" title="Enviar Expediente">
               <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a> <br>
                 @else
-                <a href="#" style="width: 65px;" class="btn btn-info btn-xs "  disabled title="El expediente ya ha sido turnado a un Secretario de Acuerdos">
+                <a href="#" style="width: 65px;" class="btn btn-info btn-xs "  disabled data-toggle="popover" data-content="El expediente ya ha sido turnado a un Secretario de Acuerdos" rel="popover" data-placement="left" title="Enviar"title="">
               <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviado</a> <br>
               @endif
-              <a href="#" class="btn btn-warning btn-xs" data-id="7"  style="width: 65px;" onclick="agregara({{$item->id}});" title="Agregar un documento al Expediente">
+              <a href="#" class="btn btn-warning btn-xs" data-id="7"  style="width: 65px;" onclick="agregara({{$item->id}});"data-toggle="popover" data-content="Agregar un documento al Expediente" data-placement="left" title="Agregar">
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar</a></td>
               <td>
                 @if($item->status==1)
@@ -190,6 +192,11 @@
         </div>
       </div>                            
     </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4 col-md-offset-8">
+      <div id="ohsnap"></div>
   </div>
 </div>
  <meta name="csrf-token" content="{{ csrf_token() }}" />

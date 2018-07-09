@@ -29,6 +29,100 @@ class oficialPartesController extends Controller
 
     	return view('oficialpartes.home',$data);
     }
+    public function getname(Request $request){
+        $name=\DB::table('users')->select(\DB::raw("concat(nombre,' ',a_paterno,' ',a_materno) as nombre"))->where('id',$request->id)->first();
+        $data=array('nombre'=>$name->nombre);
+        return json_encode($data);
+    }
+    public function entradas(Request $request){
+        $id=$request->session()->get('id');
+        $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
+        $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
+        'tipoac'=>\DB::table('acuerdotipo')->where('nivel',1)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',1)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),
+        'exp'=>\DB::table('v_new_exp')->where('status',0)->get());
+        // dd($data);
+        return view('oficialpartes.demanda.entradas',$data);
+    }
+    public function sendmensaje(Request $request){ //enviar notificacion al usuario que registró la demanda
+        // return json_encode($request->all());
+        //creamos el seguimiento de retroalimentacion para el usuario
+        $id=$request->session()->get('id');
+        $p=\DB::table('users')->select(\DB::raw("concat(nombre,' ',a_paterno,' ',a_materno)as nombre"))->where('id',$request->id_dema)->first();
+        $expediente=\DB::table('expediente')->select('expediente','serie')->where('id',$request->id_exp)->first();
+        $fecha=date('Y-m-d H:i:s');
+        $seg=new seguimiento;
+        $seg->fecha=$fecha;
+        $seg->id_modulo=2;
+        $seg->id_persona=$id;
+        $seg->movimiento='Retorno';
+        $seg->id_exp=$request->id_exp;
+        $seg->id_anexo=null;
+        $seg->id_Tseguimiento=17;
+        $seg->comentarios="Envío de retroalimentación al usario para cambios en el expediente";
+        $seg->save();
+        //creamos las notifiaciones para el usuario y el actuario
+        $serie=$expediente->serie;
+        $expediente=$expediente->expediente;
+        $m=new mensajes;
+        $m->usuario_origen=$id;
+        $m->usuario_destino=$id;
+        $m->mensaje="Se han solicitado cambios al ".$expediente.'/'.$serie." del usuario ".$p->nombre;
+        $m->estatus=0;
+        $m->created_at=date('Y-m-d H:i:s');
+        $m->updated_at=null;
+        $m->save();
+        $m=new mensajes;
+        $m->usuario_origen=$id;
+        $m->usuario_destino=$request->id_dema;
+        $m->mensaje=$request->men." en Exp ".$expediente.'/'.$serie;
+        $m->estatus=0; //verificar aquí
+        $m->created_at=date('Y-m-d H:i:s');
+        $m->updated_at=null;
+        $m->save();
+        //retornamos el nombre del usuario al que se mandaron las notificaciones
+        $dat=array('nombre'=>$p->nombre);
+        return json_encode($dat);
+    }
+    public function validademanda(Request $request){//validar la demanda registrada por el usuario
+        $id_usuario=$request->session()->get('id');
+        $id_dem=$request->id_deman;
+        //actualizamos el expediente
+         $e=\DB::table('expediente')->where('id',$request->id_exp)->update(['idtipo'=>$request->tipod,'descripcion'=>$request->obs,'status'=>1]);
+        $expediente=\DB::table('expediente')->select('expediente','serie')->where('id',$request->id_exp)->first();
+        $serie=$expediente->serie;
+        $expediente=$expediente->expediente;
+        $fecha=date('Y-m-d H:i:s');
+        //creamos el seguimiento (movimiento entrada en modulo 2)
+        $seg=new seguimiento;
+        $seg->fecha=$fecha;
+        $seg->id_modulo=2;
+        $seg->id_persona=$id_usuario;
+        $seg->movimiento='Entrada';
+        $seg->id_exp=$request->id_exp;
+        $seg->id_anexo=null;
+        $seg->id_Tseguimiento=2;
+        $seg->comentarios=$request->obs;
+        $seg->save();
+        //creamos mensajes de notificacion para usuario y secretario
+        $m=new mensajes;
+        $m->usuario_origen=$id_usuario;
+        $m->usuario_destino=$id_usuario;
+        $m->mensaje="Se ha validado el Expediente ".$expediente.'/'.$serie." y comienza su proceso";
+        $m->estatus=0;
+        $m->created_at=$fecha;
+        $m->updated_at=null;
+        $m->save();
+        $m=new mensajes;
+        $m->usuario_origen=$id_usuario;
+        $m->usuario_destino=$id_dem;
+        $m->mensaje="El Expediente ".$expediente.'/'.$serie."se ha recibido, comienza el proceso de seguimiento";
+        $m->estatus=0;
+        $m->created_at=$fecha;
+        $m->updated_at=null;
+        $m->save();
+        $exp=\DB::table('expediente')->select('expediente','serie')->where('id',$request->id_exp)->first();
+        return json_encode($exp);
+    }
     public function demandas(Request $request){
         $raw1=\DB::raw("d.razon_social as rdemandante");
         $id=$request->session()->get('id');
@@ -52,7 +146,7 @@ class oficialPartesController extends Controller
         $id=$request->session()->get('id');
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
         $raw=\DB::raw("date_format(created_at,'%d/%m/%Y ') as fecha,timediff(now(),created_at) as tiempo");
-        $men=\DB::table('mensajes')->select('id','mensaje',$raw,'estatus')->where('usuario_destino',$id)->orderby('id','desc')->get();
+        $men=\DB::table('mensajes')->select('id','mensaje',$raw,'estatus')->where('usuario_destino',$id)->orderby('id','DESC')->get();
         foreach ($men as $k) {
             $hora=$k->tiempo;
             list($horas, $minutos, $segundos) = explode(':', $hora);
@@ -76,7 +170,7 @@ class oficialPartesController extends Controller
         $id=$request->session()->get('id');
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
         $data=array(
-                'exp'=>\DB::select('select * from v_seguimiento'),
+                'exp'=>\DB::select('select v.id_expediente,v.expediente,v.fechasis,v.id_razonsocial,v.Demandado,v.id_demandante,v.Demandante,v.Resumen,e.serie from v_seguimiento v join expediente e on v.id_expediente=e.id'),
                 'rol'=>'oficialpartes',
                 'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
                 'tipoac'=>\DB::table('acuerdotipo')->where('nivel',1)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',1)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get()
@@ -575,7 +669,6 @@ class oficialPartesController extends Controller
         $d=\DB::table('acuerdotipo')->select('Tipo')->where('id',$request->id)->first();
         $d=$d->Tipo;
         return json_encode($d);
-
     }
     public function actualizartipo(Request $request){
         if($a=\DB::table('acuerdotipo')->where('id',$request->id)->update(['Tipo'=>$request->tipo])){

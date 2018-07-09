@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
+    @yield('style')
 </head>
 <body>
     <div id="app" style="height: 10%;">
@@ -108,6 +109,7 @@
         </div>
     </footer>
     <!-- Scripts -->
+    <script src="/js/jquery-2.2.4.min.js"></script>
     @yield('script')
     <script src="{{ asset('js/app.js') }}"></script>
 </body>

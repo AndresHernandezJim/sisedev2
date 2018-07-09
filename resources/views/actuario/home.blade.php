@@ -1,19 +1,18 @@
 @extends('layouts.app2')
-@section('navegation')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            @if (session('status'))
-                <div class="alert alert-success">
-                    {{ session('status') }}
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
+@section('navegacion')
+<ol class="breadcrumb">
+	<li class="active"><i class="fa fa-dashboard"></i> Inicio</li>
+</ol>
 @endsection
 @section('content')
-
-
-
+<div class="container">
+    <div class="row">
+        <center>
+            <img src="/img/logo.png" alt="" width="400px;">
+        </center>
+    </div>
+    <div class="row">
+        <center><h2>Sistema de Seguimiento de Demandas</h2></center>
+    </div>
+</div>
 @endsection

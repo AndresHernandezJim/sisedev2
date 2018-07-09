@@ -10,7 +10,6 @@ function verifica(id){
      document.getElementById('desecha').style.display = "none";
   }
 }
-
 function format(id_expediente,data) {
     var $table = $('<table>'), $tr, $td, $th;
     $table.addClass('table ');
@@ -74,7 +73,7 @@ $(function () {
             "next": "Siguiente",
             "previous": "Anterior"
         }
-    }});
+    },"lengthMenu":       [[5,10, 20,50,100, -1], [ 5,10, 20, 50,100, "Todos"]]});
     // Add event listener for opening and closing details
     $('#example').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');

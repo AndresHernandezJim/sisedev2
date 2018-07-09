@@ -2,15 +2,18 @@
 @section('style')
 <link rel="stylesheet" href="/css/alert.css">
 @endsection
-@section('content')
+@section('navegacion')
  <ol class="breadcrumb">
     <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-    <li class="active">Perfil de usuario</li>
+    <li class="active"><i class="fa fa-address-card-o"></i> Perfil de usuario</li>
   </ol>
+  <br>
+@endsection
+@section('content')
   <div class="row">
   	<div class="col-md-12">
   		<div class="box">
-  			<div class="box-header"><center><h4><b>Editar perfil</b></h4></center></div>
+  			<div class="box-header"><center><h4><b>Perfil del Usuario</b></h4></center></div>
   			<div class="box-body">
 				<div class="row" id="perfil">
 					<div class="col-md-3">	</div>

@@ -240,7 +240,7 @@ function validar(){
 		notificar('Demandado');
 		$('#agregar').focus();
 		return false;
-	}else if(archivo.length==0){collapseTwo
+	}else if(archivo.length==0){
 		$('#collapseTwo').collapse();
 		notificar3('demanda');
 	}else return true;

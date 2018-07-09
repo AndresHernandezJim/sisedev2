@@ -2,13 +2,17 @@
 @section('style')
 <link rel="stylesheet" href="/css/alert.css">
 @endsection
+@section('navegacion')
+<ol class="breadcrumb">
+    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+    <li class="active"><i class="fa fa-user-plus"></i>Registrar Usuario</li>
+  </ol> 
+  <br>
+@endsection
 @section('content')
 
 <div class="row">
-    <ol class="breadcrumb">
-    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-    <li class="active">Registrar Usuario</li>
-  </ol> 
+    
 </div>    
 <div class="row">
     @if(Session::has('exito'))
@@ -49,8 +53,8 @@
 
                                                 <div class="col-md-6">
                                                     <input id="email" type="email" class="form-control" name="email" required autocomplete="section-blue email">
-
                                                 </div>
+                                                <input type="hidden" id="haycorreo" val="0">
                                             </div>
                                             <div >
                                                 <div class="col-md-6 col-md-offset-3" id="mail2">
@@ -130,13 +134,13 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="tel" class="control-label">Teléfono</label><span style="color: red;"> *</span>
+                                                    <label for="tel" class="control-label">Teléfono</label>
                                                     <input id="tel" type="text" class="form-control" name="tel"  autocomplete="section-blue tel">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="tel" class="control-label">Teléfono célular</label><span style="color: red;"> *</span>
+                                                    <label for="tel" class="control-label">Teléfono célular</label>
                                                     <input id="cel" type="text" class="form-control" name="cel"  autocomplete="section-blue tel">
                                                 </div>
                                             </div>

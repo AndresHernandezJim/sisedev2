@@ -25,9 +25,12 @@ Route::group(['middleware' => 'oficialpartes'], function(){
 			Route::post('registro','oficialPartesController@registrodemanda');
 			Route::any('anexardoc','oficialPartesController@add_file');
 			Route::get('getdemandante','oficialPartesController@getd');
+			Route::get('entradas','oficialPartesController@entradas');
+			Route::get('getname','oficialPartesController@getname');
+			Route::get('validar','oficialPartesController@validademanda');
+			Route::get('sendmesage','oficialPartesController@sendmensaje');
 		});
 		Route::any('perfil/{id}','oficialPartesController@perfil');
-		Route::get('perfil/getdatos/{id}','oficialPartesController@perfil2');
 		Route::get('notificaciones','oficialPartesController@notificaciones');
 		Route::post('notificaciones/update','oficialPartesController@updatenotif');
 		Route::get('seguimiento','oficialPartesController@seguimiento');
@@ -49,6 +52,38 @@ Route::group(['middleware'=>'proyectista'],function(){
 	Route::group(['prefix'=>'proyectista'],function(){
 		Route::any('perfil/{id}','proyectistaController@perfil');
 		Route::get('home','proyectistaController@index');
+		Route::group(['prefix'=>'expedientes'],function(){
+			Route::get('','proyectistaController@expedientes');
+			Route::get('ver/{id}','proyectistaController@ver');
+			Route::get('redactar/{id}','proyectistaController@redactar');
+			Route::get('agregar','proyectistaController@agregarsentecia');
+			Route::post('notificar','proyectistaController@notificar');
+		});
+		Route::group(['prefix'=>'proyectos'],function(){
+			Route::get('','proyectistaController@proyectos');
+			Route::get('ver/{id}_{id2}','proyectistaController@ver2');
+			Route::get('texto','proyectistaController@gettexto');
+			Route::post('editar','proyectistaController@editar');
+			Route::post('chat','proyectistaController@addchat');
+			Route::post('guardar','proyectistaController@guardar');
+			Route::get('redactarnuevo/{id}','proyectistaController@nuevoproy');
+			Route::post('guardarnuevo','proyectistaController@guardar2');
+			Route::get('seguimiento','proyectistaController@segproy');
+			Route::get('enviar','proyectistaController@enviar');
+		});
+		Route::group(['prefix'=>'notificaciones'],function(){
+			Route::get('','proyectistaController@notificaciones');
+			Route::post('update','proyectistaController@updatenotif');
+		});
+		Route::group(['prefix'=>'seguimiento'],function(){
+			Route::get('','proyectistaController@seguimiento');
+			Route::get('anexos','proyectistaController@getseguimiento');
+		});
+		Route::get('eliminardocumento','proyectistaController@deldocumento');
+		ROute::get('restaurardocumento','proyectistaController@resdocumento');
+		Route::get('agregardocumento','proyectistaController@adddocumento');
+		Route::get('gettipodoc','proyectistaController@gettipodoc');
+		Route::get('actualizartipo','proyectistaController@actualizartipo');
 	});
 });
 //middleware para actuario
@@ -59,16 +94,28 @@ Route::group(['middleware'=>'actuario'],function(){
 		Route::get('agregardocumento','actuarioController@adddocumento');
 		Route::get('gettipodoc','actuarioController@gettipodoc');
 		Route::get('actualizartipo','actuarioController@actualizartipo');
+		Route::get('/getsecretario','actuarioController@getsecre');
 		Route::get('home','actuarioController@index');
-		Route::get('expedientes','actuarioController@acuerdos');
-		Route::get('expedientes/recuperar','actuarioController@recuperar');
-		Route::get('notificaciones','actuarioController@notificaciones');
-		Route::post('notificaciones/update','actuarioController@updatenotif');
-		Route::get('seguimiento','actuarioController@seguimiento');
-  		Route::get('seguimiento/anexos','actuarioController@getseguimiento');
+		Route::group(['prefix'=>'expedientes'],function(){
+			Route::get('','actuarioController@acuerdos');
+			Route::get('recuperar','actuarioController@recuperar');
+			Route::post('subir','actuarioController@subirdoc');
+			Route::post('retornar','actuarioController@retornar');
+		});
+		Route::group(['prefix'=>'notificaciones'],function(){
+			Route::get('','actuarioController@notificaciones');
+			Route::post('update','actuarioController@updatenotif');
+		});
+		Route::group(['prefix'=>'seguimiento'],function(){
+			Route::get('','actuarioController@seguimiento');
+  			Route::get('anexos','actuarioController@getseguimiento');	
+		});
+		
+		
 		Route::any('perfil/{id}','actuarioController@perfil');
 		Route::get('getinvolved','actuarioController@getinvolved');
 		Route::post('notificar','actuarioController@notificar');
+		
 	});
 });
 //middleware para secretariodeacuerds
@@ -97,6 +144,7 @@ Route::group(['middleware'=>'secretarioacuerdo'],function(){
 //middleware para institucion
 Route::group(['middleware'=>'institucion'],function(){
 	Route::group(['prefix'=>'institucion'],function(){
+		Route::get('home','institucionController@index');
 		Route::any('perfil/{id}','institucionController@perfil');
 	});
 });
@@ -114,7 +162,16 @@ Route::group(['middleware'=>'magistrado'],function(){
 			Route::get('','magistradoController@demandas');
 			Route::get('recuperar','oficialPartesController@recuperar');
 		});
-
+		Route::group(['prefix'=>'notificaciones'],function(){
+			Route::get('','magistradoController@notif');
+  			Route::post('update','magistradoController@updatenotif');
+		});
+		Route::get('eliminardocumento','magistradoController@deldocumento');
+		ROute::get('restaurardocumento','magistradoController@resdocumento');
+		Route::get('agregardocumento','magistradoController@adddocumento');
+		Route::get('gettipodoc','magistradoController@gettipodoc');
+		Route::get('actualizartipo','magistradoController@actualizartipo');
+		
 	});
 
 });
@@ -137,7 +194,25 @@ Route::group(['middleware'=>'admin'],function(){
 //middleware para usuario
 Route::group(['middleware'=>'user'],function(){
 	Route::group(['prefix'=>'user'],function(){
-		Route::get('perfil','userController@perfil');
 		Route::get('home','userController@index');
+		Route::group(['prefix'=>'perfil'],function(){
+			Route::any('{id}','userController@perfil');
+		});
+		Route::group(['prefix'=>'demandas'],function(){
+			Route::get('','userController@demandas');
+			Route::get('recuperar','userController@recuperar');
+			Route::get('nueva','userController@nuevademanda');
+			Route::post('guardar','userController@guardar');
+			Route::get('gettipo','userController@gettipo');
+			Route::post('anexardoc','userController@add_file');
+		});
+		Route::group(['prefix'=>'seguimiento'],function(){
+			Route::get('','userController@seguimiento');
+  			Route::get('anexos','userController@getseguimiento');	
+		});
+		Route::group(['prefix'=>'notificaciones'],function(){
+			Route::get('','userController@notif');
+  			Route::post('update','userController@updatenotif');
+		});
 	});
 });

@@ -5,13 +5,14 @@
 <link rel="stylesheet" href="/css/alert.css">
 <link rel="stylesheet" href="/css/zoom.css">
 @endsection
+@section('navegacion')
+<ol class="breadcrumb">
+    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+    <li class="active"><i class="fa fa-file"></i> Acuerdos</li>
+ </ol>
+ <br>
+@endsection
 @section('content')
-<div class="row">
-	<ol class="breadcrumb">
-	    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-	    <li class="active">Acuerdos</li>
-	 </ol>
-</div>
 @if(Session::has('exito2'))
     <input type="hidden" name="exito" value="1" id="exito">
 @else
@@ -43,29 +44,38 @@
 							<tbody>
 								@foreach($expediente as $k)
 								<tr data-child-value="{{$k->id}}">
-									<td class="details-control" style="color: blue; text-align: center; font-weight: bold;"><a class="btn btn-primary btn-sm" title="Expediente {{$k->expediente}}/{{$k->serie}}">{{$k->expediente}}</a></td>
+									<td class="details-control"><a class="btn btn-primary btn-sm" data-toggle="popover" data-content="Visauliza los documentos registrados en el expediente" rel="popover" placement="top" title="Expediente {{$k->expediente}}/{{$k->serie}}"">{{$k->expediente}}</a></td>
             						<td>{{$k->fecha}}</td>
             						<td>{{$k->rdemandado}}</td>
             						<td>{{$k->demandante}} <br>{{$k->rdemandante}}</td>
                                     <td>{{$k->resumen}}</td>
 						            <td style="text-align: center;">
-                                        @if($k->status >= 6)
-						                <a href="#" class="btn bg-orange btn-xs" disabled title="El Expediente ya ha sido Turnado al Proyectista">
-						                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviado</a>
-                                        @else
-                                        <a href="#" class="btn btn-success btn-xs " onclick="enviar1({{$k->id}});" title="Turnar el Expediente al Proyectista">
-                                        <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
-                                        @endif
-						                
-                                        <a href="#" class="btn btn-primary btn-xs " onclick="agregar({{$k->id}},{{$k->serie}})" title="Agregar un Documento al Expediente">
-						                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
-						                
-                                        @if($k->status >=4)
-                                        <a href="#" class="btn btn-info btn-xs" disabled title="El Expediente ya ha sido Enviado para Notificar">
-						                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificado</a>
-                                        @else
-                                        <a href="#" class="btn btn-info btn-xs" onclick="notificar2({{$k->id}});"  title="Enviar el Expediente al Actuario para Notificar">
-                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
+                                        @if($k->status==3)
+                                            <a href="#" class="btn btn-success btn-xs " onclick="enviar1({{$k->id}});" title="Turnar el Expediente al Proyectista">
+                                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
+                                            <a href="#" class="btn btn-primary btn-xs " onclick="agregar({{$k->id}},{{$k->serie}})" title="Agregar un Documento al Expediente">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
+                                            <a href="#" class="btn btn-info btn-xs" onclick="notificar2({{$k->id}});"  title="Enviar el Expediente al Actuario para Notificar">
+                                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
+
+                                        @elseif($k->status>=4)
+						                      
+                                            @if($k->status >= 6)
+                                                <a href="#" class="btn bg-orange btn-xs" disabled title="El Expediente ya ha sido Turnado al Proyectista">
+                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviado</a>
+                                                <a href="#" class="btn btn-primary btn-xs " disabled title="No es posible agregar más documentos, el expediente ya está en proceso de redaccion de proyecto de sentencia">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
+                                                <a href="#" class="btn btn-info btn-xs" disabled title="No es posible notificar, el Expediente ya está en proceso de redacción de proyecto de sentencia">
+                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificado</a>
+                                            @else
+                                                <a href="#" class="btn bg-orange btn-xs" disabled title="No es posible turnar el expediente, se encuentra en proceso de notificación">
+                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviado</a>
+                                                <a href="#" class="btn btn-primary btn-xs " disabled title="No es posible agregar más documentos, el expediente se encuentra en proceso de notificación">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
+                                                <a href="#" class="btn btn-info btn-xs" disabled title="No es posible notificar, el Expediente ya está en proceso Notificación por parte del Actuario">
+                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificado</a>
+                                            @endif
+                                        
                                         @endif
 						            </td>
                                     <td>

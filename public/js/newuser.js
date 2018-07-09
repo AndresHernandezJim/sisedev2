@@ -25,9 +25,11 @@ $(document).ready(function(){
 			success:function(data){
 				data=JSON.parse(data);
 				if(data.id==0){
+					$('#haycorreo').val(1);
 					$('#mail2 >').remove();
 				}else{
 					$('#mail2 >').remove();
+					$('#haycorreo').val(2);
 					$('#mail2').append('<div class="row"><div clas="col-md-5 col-md-offset-2"><span style="color:red;" ><center>Éste correo electronico ya está en uso</center></span></div></div>');
 				}
 			}
@@ -54,6 +56,7 @@ $(document).ready(function(){
 			
 	});
 	function validar(){
+		var correo=$('#haycorreo').val();
 		var nombre=$('#nombre').val();
 		var ap_pa=$('#a_paterno').val();
 		var tel=$('#tel').val();
@@ -64,7 +67,13 @@ $(document).ready(function(){
 		var colo=$('#colonia').val();
 		var mun=$('#municipio').val();
 		var ref=$('#refe').val();
-		if(nombre.length==0){
+		if(correo!=1){
+			if(correo==2){
+				$('#email').focus();
+				notificar4();
+				return false;
+			}
+		}else if(nombre.length==0){
 			$('#collapseTwo').collapse();
 			$('#nombre').focus();
 			notificar2('Nombre');
@@ -72,14 +81,6 @@ $(document).ready(function(){
 		}else if(ap_pa.length==0){
 			$('#a_paterno').focus();
 			notificar2('Apellido Paterno');	
-			return false;
-		}else if(tel.length==0){
-			$('#tel').focus
-			notificar2('Teléfono');
-			return false;
-		}else if(cel.length==0){
-			$('#cel').focus();
-			notificar2('Teléfono Celular');
 			return false;
 		}else if(calle.length==0){
 			$('#collapseThree').collapse();
@@ -102,11 +103,7 @@ $(document).ready(function(){
 			$('#municipio').focus();
 			notificar3('Municipio')
 			return false;
-		}else if(ref.length==0){
-			$('#refe').focus();
-			notificar2('Referencias');
-			return false;
-		}else{
+		}else 
 			return true;
 		}
 		
@@ -116,6 +113,9 @@ $(document).ready(function(){
 	}
 	function notificar3(campo){
 		ohSnap('Debe seleccionar un '+campo,{'color':'red',});
+	}
+	function notificar4(){
+		ohSnap('El correo electrónico ya se encuentra en uso',{'color':'red'});
 	}
 });
 

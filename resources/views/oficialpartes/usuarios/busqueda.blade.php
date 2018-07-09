@@ -2,13 +2,14 @@
 @section('style')
 <link rel="stylesheet" href="/css/alert.css">
 @endsection
-@section('content')
-<div class="row">
-    <ol class="breadcrumb">
+@section('navegacion')
+<ol class="breadcrumb">
     <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-    <li class="active">Busqueda de Usuario</li>
+    <li class="active"><i class="fa fa-user-circle-o"></i> Busqueda de Usuario</li>
   </ol> 
-</div>  
+  <br>
+@endsection
+@section('content')
 <div class="row">
         <div class="col-md-4 col-md-offset-8">
             <div id="ohsnap"></div>

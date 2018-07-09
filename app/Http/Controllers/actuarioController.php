@@ -27,9 +27,9 @@ class actuarioController extends Controller
         $data=array(
             'actuario'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',5)->get(),
             'proyectista'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',4)->get(),
-            'tipoacuerdo'=>\DB::table('acuerdotipo')->where('nivel','2')->where('id','<>',11)->where('id','<>',8)->select('id','Tipo')->get(),
-            'expediente'=>\DB::select("select * from v_expedientes3 where id in(select id_exp as id from envios where id_receptor=?)",[$id]),
-            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,
+            'tipodoc'=>\DB::table('acuerdotipo')->where('nivel','3')->select('id','Tipo')->orderby('Tipo','DESC')->get(),
+            'expediente'=>\DB::select("SELECT distinct v.id,v.fecha,v.expediente,v.rdemandado,v.demandante,v.rdemandante,v.resumen,v.status,v.avatar,v.serie,v.oficiales,s.id_persona AS secretario FROM v_expedientes3 v LEFT JOIN seguimiento s ON v.id = s.id_exp WHERE s.id_modulo = 3 AND s.movimiento = 'Salida' AND v.id IN (SELECT id_exp FROM envios WHERE id_receptor = ? )",[$id]),
+            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
             'rolid'=>$id,
             'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get()
         );
@@ -60,9 +60,10 @@ class actuarioController extends Controller
     public function seguimiento(Request $request){
         $id=$request->session()->get('id');
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
-        $data=array('exp'=>\DB::select('select * from v_seguimiento'),
+        $data=array('exp'=>\DB::select('select v.id_expediente,v.expediente,v.fechasis,v.id_razonsocial,v.Demandado,v.id_demandante,v.Demandante,v.Resumen,e.serie from v_seguimiento v join expediente e on v.id_expediente=e.id'),
                 'rol'=>'actuario',
-                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
+                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
+       //dd($data);
     	return view('actuario.seguimiento',$data);
     }
     public function getseguimiento(Request $request){
@@ -143,7 +144,7 @@ class actuarioController extends Controller
         $data=array(
            'anexos'=>\DB::table('anexopdf as a')->join('acuerdotipo as act','act.id','a.id_Tipo')
                         ->select($raw1)->where('a.id_Expediente',$request->expediente)
-                        ->orderby('FechaUp','asc')->distinct()->get());
+                        ->orderby('Folio','DESC')->distinct()->get());
         return json_encode($data);
     }
     public function getinvolved(Request $request){
@@ -172,6 +173,9 @@ class actuarioController extends Controller
         $exp=$exp->expediente;
         $folio=$folio->cantidad;
         $folio2=$exp.'_'.$folio;
+        if($observ==null){
+            $observ="Se ha notificado a los involucrados";
+        }
         //subir el archivo
         $avatar=filehelper::uploadfile2($archivo,$exp,$serie);
         $anexo=new anexo;
@@ -242,7 +246,9 @@ class actuarioController extends Controller
         $m->created_at=date('Y-m-d H:i:s');
         $m->updated_at=null;
         $m->save();
-        return redirect('/actuario/expedientes')->with('exito2',true);
+        //actualizar el expediente a estatus de notificado
+        $e=\DB::table('expediente')->where('id',$id_exp)->update(['status'=>5]);
+        return redirect('/actuario/expedientes')->with('exito3',true);
     }
     public function resdocumento(Request $request){
         //return json_encode($request->all());
@@ -279,5 +285,126 @@ class actuarioController extends Controller
             $data=array('mensaje'=>"El tipo de documento se actualizó de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
             return json_encode($data);
         }
+    }
+    public function getsecre(Request $request){
+        $secre=\DB::table('users')->select(\DB::raw("concat(nombre,' ',a_paterno,' ',a_materno) as nombre"))->where('id',$request->id)->first();
+        $secre=$secre->nombre;
+        return json_encode($secre);
+    }
+    public function subirdoc(Request $request){
+        //
+        $id=$request->id_exp;
+        $raw=\DB::raw('count(Folio) as cantidad');
+        $folio=\DB::table('anexopdf')->select($raw)->where('id_Expediente',$id)->first();
+        $exp=\DB::table('expediente')->select('expediente')->where('id',$id)->first();
+        $serie=$request->serie;
+        $exp=$exp->expediente;
+        $folio=$folio->cantidad;
+        $archivo=$request->pdf_file;
+        $folio2=$exp.'_'.$folio;
+        $fecha=date("Y-m-d H:i:s");
+        $obs=$request->obs;
+        if($obs==null){
+            $obs="Anexo de documento";
+        }
+        $avatar=filehelper::uploadfile2($archivo,$exp,$serie);
+        $anexo=new anexo;
+        $anexo->id_Tipo=$request->doctipo;
+        $anexo->Folio=$folio2;
+        $anexo->id_Expediente=$id;
+        $anexo->FechaUp=$fecha;
+        $anexo->PathAnexo='./Historico/'.$serie.'/'.$exp;
+        $anexo->NomFile=$avatar;
+        $anexo->Status=0;
+        $anexo->save();
+        $seg=new seguimiento; // almacenar seguimiento de los anexos;
+        $seg->fecha=$fecha;
+        $seg->id_modulo=4;
+        $seg->id_persona=$request->id_log;
+        $seg->movimiento='insitu';
+        $seg->id_exp=$id;
+        $seg->id_anexo=$anexo->id;
+        $seg->id_Tseguimiento=15;
+        $seg->comentarios=$obs;
+        $seg->save();
+        return redirect('oficialpartes/demanda')->with('exito2',true);
+    }
+    public function retornar(Request $request){
+        // return json_encode($request->all());
+        $fecha1= date("Y-m-d H:i:s");
+        $us=$request->session()->get('id');
+        $obs=$request->obs;
+        if($obs==null){
+            $seg=new seguimiento;
+            $seg->fecha=$fecha1;
+            $seg->id_modulo=4;
+            $seg->id_persona=$request->id_log;
+            $seg->movimiento='Salida';
+            $seg->id_exp=$request->id_exp;
+            $seg->id_anexo=null;
+            $seg->id_Tseguimiento=$request->tiposeg;
+            $seg->comentarios="Se retorna el Expediente al Secretario de Acuerdos";
+            $seg->save();
+            
+            $seg=new seguimiento;
+            $seg->fecha=$fecha1;
+            $seg->id_modulo=3;
+            $seg->id_persona=$request->id_sec;
+            $seg->movimiento='Retorno';
+            $seg->id_exp=$request->id_exp;
+            $seg->id_anexo=null;
+            $seg->id_Tseguimiento=$request->tiposeg;
+            $seg->comentarios="Se recibe el Expediente despues de Notificar";
+            $seg->save();
+        }else{
+            $seg=new seguimiento;
+            $seg->fecha=$fecha1;
+            $seg->id_modulo=4;
+            $seg->id_persona=$request->id_log;
+            $seg->movimiento='Salida';
+            $seg->id_exp=$request->id_exp;
+            $seg->id_anexo=null;
+            $seg->id_Tseguimiento=$request->tiposeg;
+            $seg->comentarios=$obs;
+            $seg->save();
+            
+            $seg=new seguimiento;
+            $seg->fecha=$fecha1;
+            $seg->id_modulo=3;
+            $seg->id_persona=$request->id_sec;
+            $seg->movimiento='Retorno';
+            $seg->id_exp=$request->id_exp;
+            $seg->id_anexo=null;
+            $seg->id_Tseguimiento=$request->tiposeg;
+            $seg->comentarios=$obs;
+            $seg->save();
+        }
+        $env=new envios;
+        $env->id_exp=$request->id_exp;
+        $env->id_envio=$request->id_log;
+        $env->id_receptor=$request->id_sec;
+        $env->fecha=$fecha1;
+        $env->save();
+        $exp=\DB::table('expediente')->where('id',$request->id_exp)->update(['status'=>3]);
+        $usuario=\DB::table('users')->where('id',$request->id_sec)->first();
+        $expediente=\DB::table('expediente')->select('expediente','serie')->where('id',$request->id_exp)->first();
+        $data=['nombre'=>$usuario->nombre,'a_paterno'=>$usuario->a_paterno,'a_materno'=>$usuario->a_materno,'expediente'=>$expediente->expediente,'serie'=>$expediente->serie];
+        $m=new mensajes;
+        $m->usuario_origen=$us;
+        $m->usuario_destino=$us;
+        $m->mensaje="Retornaste el Exp. ".$expediente->expediente."/".$expediente->serie." al Secretario de Acuerdo ".$usuario->nombre." ".$usuario->a_paterno." ".$usuario->a_materno;
+        $m->estatus=0;
+        $m->created_at=$fecha1;
+        $m->updated_at=null;
+        $m->save();
+        $m=new mensajes;
+        $m->usuario_origen=$us;
+        $m->usuario_destino=$request->id_sec;
+        $m->mensaje="El Expediente ".$expediente->expediente.'/'.$expediente->serie.' se te ha retornado despúes de Notificar';
+        $m->estatus=0;
+        $m->created_at=$fecha1;
+        $m->updated_at=null;
+        $m->save();
+        return json_encode($data);
     }
 }

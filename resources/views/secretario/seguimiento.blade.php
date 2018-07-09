@@ -3,13 +3,14 @@
 <link rel="stylesheet" href="/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 <link rel="stylesheet" href="/bower_components/bootstrap-daterangepicker/daterangepicker.css">
 @stop
+@section('navegacion')
+<ol class="breadcrumb">
+    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+    <li class="active"><i class="fa fa-map-marker"></i> Seguimiento</li>
+</ol>
+<br>
+@endsection
 @section('content')
-<div class="row">
-    <ol class="breadcrumb">
-        <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li class="active">Seguimiento</li>
-    </ol>
-</div>
 <div class="row">
     <div class="col-md-12">
         <div class="box">
@@ -30,7 +31,7 @@
                         <tbody>
                           @foreach ($exp as  $key)
                               <tr data-child-value="{{$key->id_expediente}}">
-                                <td class="details-control" style="color: blue; text-align: center; font-weight: bold;"><a class="btn btn-primary btn-small"> {{$key->expediente}}</a></td>
+                                <td class="details-control" style="color: blue; text-align: center; font-weight: bold;"><a class="btn btn-primary btn-small" data-toggle="popover" data-content="Visauliza el seguimiento paso a paso del expediente" rel="popover" placement="top" title="Ver el seguimiento del Expediente {{$key->expediente}}/{{$key->serie}}"> {{$key->expediente}}</a></td>
                                 <td>{{$key->fechasis}}</td>
                                 <td>{{$key->Demandado}}</td>
                                 <td>{{$key->Demandante}}</td>
@@ -68,7 +69,6 @@
     </div>
 </div>
 @endsection
-
 @section('script')
 <script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>

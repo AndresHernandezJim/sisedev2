@@ -1,4 +1,4 @@
-function eliminar(id){
+function eliminard(id){
 	var rol=$('#roldocumento').val();
 	var mensaje = confirm("¿Estás seguro que deseas eliminar éste tipo de documento?");
 	//Detectamos si el usuario acepto el mensaje
@@ -14,7 +14,7 @@ function eliminar(id){
 					$('#listadoc2').append("<li><div class='menu-info'><p>No existen elementos para mostrar</p></div></li>");
 				}else{
 					$.each(data.tipoac2,function(index,val){
-						$('#listadoc2').append("<li><div class='menu-info'><p><a href='#' onclick='restaurar("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+						$('#listadoc2').append("<li><div class='menu-info'><p><a href='#' onclick='restaurard("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 					});
 				}
 				$('#listadoc>').remove();
@@ -23,7 +23,7 @@ function eliminar(id){
 				}else{
 					
 					$.each(data.tipoac,function(index,val){
-						$('#listadoc').append("<li ondblclick='modificar("+val.id+");'><div class='menu-info'><p><a href='#'' onclick='eliminar("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+						$('#listadoc').append("<li ondblclick='modificard("+val.id+");'><div class='menu-info'><p><a href='#'' onclick='eliminard("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 					});
 				}
 			}
@@ -32,7 +32,7 @@ function eliminar(id){
 	}
 	//Detectamos si el usuario denegó el mensaje
 }
-function restaurar(id){
+function restaurard(id){
 	var rol=$('#roldocumento').val();
 	var mensaje = confirm("¿Estás seguro que deseas reestablecer éste tipo de documento?");
 	//Detectamos si el usuario acepto el mensaje
@@ -48,7 +48,7 @@ function restaurar(id){
 						$('#listadoc2').append("<li><div class='menu-info'><p>No existen elementos para mostrar</p></div></li>");
 				}else{
 					$.each(data.tipoac2,function(index,val){
-						$('#listadoc2').append("<li><div class='menu-info'><p><a href='#'' onclick='restaurar("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+						$('#listadoc2').append("<li><div class='menu-info'><p><a href='#'' onclick='restaurard("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 					});
 				}
 				if(data.tipoac.length==0){
@@ -56,7 +56,7 @@ function restaurar(id){
 				}else{
 					$('#listadoc>').remove();
 					$.each(data.tipoac,function(index,val){
-						$('#listadoc').append("<li ondblclick='modificar("+val.id+");'><div class='menu-info'><p><a href='#'' onclick='eliminar("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+						$('#listadoc').append("<li ondblclick='modificard("+val.id+");'><div class='menu-info'><p><a href='#'' onclick='eliminard("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 					});
 				}
 			}
@@ -85,7 +85,7 @@ function agregardoc(){
 							$('#listadoc2').append("<li><div class='menu-info'><p>No existen elementos para mostrar</p></div></li>");
 					}else{
 						$.each(data.tipoac2,function(index,val){
-							$('#listadoc2').append("<li><div class='menu-info'><p><a href='#'' onclick='restaurar("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+							$('#listadoc2').append("<li><div class='menu-info'><p><a href='#'' onclick='restaurard("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 						});
 					}
 					if(data.tipoac.length==0){
@@ -93,7 +93,7 @@ function agregardoc(){
 					}else{
 						$('#listadoc>').remove();
 						$.each(data.tipoac,function(index,val){
-							$('#listadoc').append("<li><div class='menu-info'><p><a href='#'' onclick='eliminar("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+							$('#listadoc').append("<li><div class='menu-info'><p><a href='#'' onclick='eliminard("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 						});
 					}
 				}
@@ -103,7 +103,7 @@ function agregardoc(){
 		}
 	}
 }
-function modificar(id){
+function modificard(id){
 	console.log(id);
 	var rol=$('#roldocumento').val();
 	$.ajax({
@@ -120,7 +120,7 @@ function modificar(id){
 		}
 	});
 }
-function save(){
+function saved(){
 	var id=$('#iddocto').val();
 	var texto=$('#moddoc').val();
 	var rol=$('#roldocumento').val();
@@ -143,7 +143,7 @@ function save(){
 								$('#listadoc2').append("<li><div class='menu-info'><p>No existen elementos para mostrar</p></div></li>");
 						}else{
 							$.each(data.tipoac2,function(index,val){
-								$('#listadoc2').append("<li ><div class='menu-info'><p><a href='#'' onclick='restaurar("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+								$('#listadoc2').append("<li ><div class='menu-info'><p><a href='#'' onclick='restaurard("+val.id+");' title='Restablecer éste tipo de documento'><i class='fa fa-check' style='color:green;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 							});
 						}
 						if(data.tipoac.length==0){
@@ -151,7 +151,7 @@ function save(){
 						}else{
 							$('#listadoc>').remove();
 							$.each(data.tipoac,function(index,val){
-								$('#listadoc').append("<li ondblclick='modificar("+val.id+");'><div class='menu-info'><p><a href='#'' onclick='eliminar("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
+								$('#listadoc').append("<li ondblclick='modificard("+val.id+");'><div class='menu-info'><p><a href='#'' onclick='eliminard("+val.id+");' title='Eliminar éste tipo de documento'><i class='fa fa-times' style='color:red;'></i></a> &nbsp;"+val.Tipo+"</p></div></li>");
 							});
 						}
 						cancelar();
@@ -168,7 +168,7 @@ function save(){
 function gettipo(id){
 
 }
-function cancelar(){
+function cancelard(){
 	$('#formactua').prop('hidden',true);
 	$('#formadd').prop('hidden',false);
 	$('#moddoc').val();

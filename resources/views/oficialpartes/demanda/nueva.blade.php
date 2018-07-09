@@ -2,12 +2,16 @@
 @section('style')
 <link rel="stylesheet" href="/css/alert.css">
 @endsection
+@section('navegacion')
+<ol class="breadcrumb">
+	<li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
+	<li><a href="/oficialpartes/demanda" class="fa fa-list">Demandas</a></li>
+	<li class="active"><i class="fa fa-pencil-square-o"></i> Nueva Demanda</li>
+</ol>
+<br><br>
+@endsection
 @section('content')
- <ol class="breadcrumb">
-    <li><a href="/home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-    <li><a href="/oficialpartes/demanda">Demandas</a></li>
-    <li class="active">Nueva Demanda</li>
-  </ol>
+ 
   	<div class="row">
         <div class="col-md-4 col-md-offset-8">
             <div id="ohsnap"></div>

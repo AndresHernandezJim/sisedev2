@@ -104,8 +104,8 @@ class secretarioacuerdoController extends Controller
             'actuario'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',5)->get(),
             'proyectista'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',4)->get(),
             'tipoacuerdo'=>\DB::table('acuerdotipo')->where('nivel','2')->where('estatus','<>',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),
-            'expediente'=>\DB::select("select  * from v_expedientes2  v join v_entradasalida2 v2 on v.id=v2.id_exp join envios e on e.id_exp=v.id where id_receptor=? order by v.id desc",[$id]),
-            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,
+            'expediente'=>\DB::select("select DISTINCT v.id,v.expediente,v.fecha,v.status,v.rdemandado,v.demandante,v.rdemandante,v.resumen,v.avatar,v.serie,v.oficiales,v2.tiempo from v_expedientes2  v join v_entradasalida2 v2 on v.id=v2.id_exp join envios e on e.id_exp=v.id where id_receptor=? order by v.id desc",[$id]),
+            'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','DESC')->get(),'cant'=>$ca->cantidad,
             'rolid'=>$id,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get()
         );
         //dd($data);
@@ -116,15 +116,15 @@ class secretarioacuerdoController extends Controller
         $data=array(
            'anexos'=>\DB::table('anexopdf as a')->join('acuerdotipo as act','act.id','a.id_Tipo')
                         ->select($raw1)->where('a.id_Expediente',$request->expediente)
-                        ->orderby('FechaUp','asc')->distinct()->get());
+                        ->orderby('Folio','DESC')->distinct()->get());
         return json_encode($data);
     }
     public function seguimiento( Request $request){
         $id=$request->session()->get('id');
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
-        $data=array('exp'=>\DB::select('select * from v_seguimiento'),
+        $data=array('exp'=>\DB::select('select v.id_expediente,v.expediente,v.fechasis,v.id_razonsocial,v.Demandado,v.id_demandante,v.Demandante,v.Resumen,e.serie from v_seguimiento v join expediente e on v.id_expediente=e.id'),
                 'rol'=>'secretarioacuerdo',
-                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
+                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','DESC')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',2)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
         return view('secretario.seguimiento',$data);
     }
     public function getseguimiento(Request $request){

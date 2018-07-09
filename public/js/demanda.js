@@ -18,7 +18,7 @@ $(function () {
             "next": "Siguiente",
             "previous": "Anterior"
         }
-    },"lengthMenu":       [[5, 10, 20, 25, 50, -1], [5, 10, 20, 25, 50, "Todos"]],});
+    },"lengthMenu":       [[5, 10, 20, 50,100, -1], [5, 10, 20, 50, 100,"Todos"]]});
       var fila=0;
       $("#datepicker").datepicker();
       // Add event listener for opening and closing details

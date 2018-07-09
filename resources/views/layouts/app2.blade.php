@@ -24,14 +24,6 @@
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   @yield('style')
 </head>
@@ -40,7 +32,7 @@
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="/home" class="logo">
+    <a href="/home" class="logo" title="Menu de inicio">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">SSD</span>
       <!-- logo for regular state and mobile devices -->
@@ -49,53 +41,31 @@
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
       <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" title="Cambiar modo de visualización" role="button">
         <span class="sr-only">Toggle navigation</span>
       </a>
   
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Notifications: style can be found in dropdown.less -->
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            @include('layouts.menunav3')
+          </li>
           <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              @if($cant>0)
-              <span class="label label-warning">{{$cant}}</span>
-              @endif
-            </a>
-            <ul class="dropdown-menu">
-              @if($cant>2)
-              <li class="header">Tienes {{$cant}} notificaciones nuevas</li>
-              @elseif($cant>1)
-              <li class="header">Tienes {{$cant}} notificación nueva</li>
-              @else
-               <li class="header">No tienes notificaciones nuevas</li>
-              @endif
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul id="mensajes" class="menu">
-                  @foreach($mensajes as $k)
-                  <li><a href="#" class="btn btn-small btn-default"> <p>{{$k->mensaje}} <br><small><i class="fa fa-clock-o pull-rigth"></i>{{$k->created_at}}</small></p>
-                  </a>
-                  </li>
-                  @endforeach
-                </ul>
-              </li>
-               @include('layouts.menunav2')
-             
-            </ul>
+            @include('layouts.menunav2')
           </li>
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <input type="hidden" id="idusuario" value="{{ Auth::user()->id }}">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="{{Auth::user()->avatar}}" class="user-image" alt="User Image">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"  title="Panel del Usuario">
+              <img src="{{Auth::user()->avatar}}" class="user-image" alt="{{ Auth::user()->name }}" title="{{ Auth::user()->name }}">
               <span class="hidden-xs">{{ Auth::user()->name }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="{{Auth::user()->avatar}}" class="img-circle" alt="User Image">
+                <img src="{{Auth::user()->avatar}}" class="img-circle" alt="{{ Auth::user()->name }}" title="{{ Auth::user()->name }}">
 
                 <p>
                  {{ Auth::user()->name }} 
@@ -112,9 +82,9 @@
                   
                 </div>
                 <div class="pull-right">
-                	<a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">
+                	<a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat" title="Salir del sistema">
                         Cerrar Sesión
-                    </a>
+                    </a >
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         {{ csrf_field() }}
                     </form>
@@ -123,9 +93,12 @@
             </ul>
           </li>
           <!-- Control Sidebar Toggle Button -->
+          @if(Auth::user()->hasRole('Usuario') || Auth::user()->hasRole('Institución'))
+          @else
           <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+            <a href="#" data-toggle="control-sidebar" title="Tipos de documentos para este Actor"><i class="fa fa-gears"></i></a>
           </li>
+          @endif
         </ul>
       </div>
     </nav>
@@ -164,14 +137,14 @@
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 1.1
+      <b>Version</b> 2.0
     </div>
     <img src="/img/logo.png" style="width:30px;" alt="Logotipo Tribunal"> &nbsp;
     <strong>Tribunal de lo Contencioso Administrativo del Estado de Colima &copy;. Derechos Reservados <?php echo date('Y'); ?>.</strong> 
   </footer>
 
   <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
+  <aside class="control-sidebar control-sidebar-dark" >
 
     <!-- Tab panes -->
     <div class="tab-content">
@@ -198,13 +171,6 @@
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-<!-- jQuery Knob Chart -->
-<!-- <script src="/bower_components/jquery-knob/dist/jquery.knob.min.js"></script> -->
-<!-- jvectormap  -->
-<!-- <script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script> -->
-<!-- Bootstrap WYSIHTML5 -->
 <script src="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <!-- Slimscroll -->
 <script src="/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
@@ -213,6 +179,9 @@
 <!-- AdminLTE App -->
 <script src="/dist/js/adminlte.min.js"></script>
 <script src="/js/documentos.js"></script>
+<script type="text/javascript">
+  $('[data-toggle="popover"]').popover({ trigger: "hover"});
+</script>
 <!-- <script src="/bower_components/Chart.js/Chart.js"></script>
  --><!-- AdminLTE for demo purposes -->
 <!-- <script src="/dist/js/demo.js"></script> -->

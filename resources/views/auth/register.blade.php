@@ -3,30 +3,65 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
-                <div class="panel-heading"><center><h4>Registro de Usuario</h4></center></div>
+                <div class="panel-heading">Registro de Usuario</div>
                 <div class="panel-body">
-                     <form class="form-horizontal" method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}
-                        <div class="col-md-10 col-md-offset-1">
-                            <div id="accordion">
-                                <div class="card">
-                                    <div class="card-header" id="headingOne">
-                                      <h5 class="mb-0">
-                                        <button class="btn btn-link" data-toggle="collapse " data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                          Datos Personales
-                                        </button>
-                                      </h5>
-                                    </div>
-                                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                                      <div class="card-body">
+                        <ul class="nav nav-tabs">
+                            <li id="l1" class="active"><a data-toggle="tab" href="#cuenta"><span class="glyphicon glyphicon-edit"></span> Datos de Cuenta</a></li>
+                            <li id="l2"><a data-toggle="tab" href="#usuario"><span class="glyphicon glyphicon-user"></span> Datos del Usuario</a></li>
+                            <li id="l3"><a data-toggle="tab" href="#contacto"><span class="glyphicon glyphicon-envelope"></span> Domicilio</a></li>
+                        </ul>     
+                        <div class="tab-content">
+                            <div id="cuenta" class="tab-pane fade in active">
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="row">
-                                            <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
-                                                <label for="nombre" class="col-md-4 control-label">Nombre</label>
-                                                <div class="col-md-6">
-                                                    <input id="nombre" type="text" class="form-control" name="nombre" value="{{ old('nombre') }}"  autofocus>
-
+                                            <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                                                <label for="email" class="col-md-3 control-label">Email</label>
+                                                <div class="col-md-8">
+                                                    <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required autofocus>
+                                                    @if ($errors->has('email'))
+                                                        <span class="help-block">
+                                                            <strong>{{ $errors->first('email') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                                                <label for="password" class="col-md-3 control-label">Contraseña</label>
+                                                <div class="col-md-8">
+                                                    <input type="password" name="password" id="password" class="form-control" required autofocus>
+                                                    @if ($errors->has('password'))
+                                                        <span class="help-block">
+                                                            <strong>{{ $errors->first('password') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="password-confirmation" class="col-md-3 control-label">Confirmar Contraseña</label>
+                                                <div class="col-md-8">
+                                                    <input id="password-confirm" type="password" name="password_confirmation" id="password-confirmation" class="form-control" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="form-group {{ $errors->has('nombre') ? ' has-error' : '' }}">
+                                                <label for="nombre" class="col-md-3 control-label">Nombre</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre') }}" autofocus>
                                                     @if ($errors->has('nombre'))
                                                         <span class="help-block">
                                                             <strong>{{ $errors->first('nombre') }}</strong>
@@ -37,13 +72,11 @@
                                         </div>
                                         <br>
                                         <div class="row">
-                                            <div class="form-group{{ $errors->has('a_paterno') ? ' has-error' : '' }}">
-                                                <label for="name" class="col-md-4 control-label">Apellido Paterno</label>
-
-                                                <div class="col-md-6">
-                                                    <input id="a_paterno" type="text" class="form-control" name="a_paterno" value="{{ old('a_paterno') }}" autofocus>
-
-                                                    @if ($errors->has('a_paterno'))
+                                            <div class="form-group {{ $errors->has('a_paterno') ? ' has-error' : '' }}">
+                                                <label for="a_paterno" class="col-md-3 control-label">Apellido Paterno</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="a_paterno" id="a_paterno" class="form-control" value="{{old('a_paterno')}}" autofocus>  
+                                                    @if ($errors->has('a_p'))
                                                         <span class="help-block">
                                                             <strong>{{ $errors->first('a_paterno') }}</strong>
                                                         </span>
@@ -53,180 +86,218 @@
                                         </div>
                                         <br>
                                         <div class="row">
-                                            <div class="form-group{{ $errors->has('a_materno') ? ' has-error' : '' }}">
-                                                <label for="a_materno" class="col-md-4 control-label">Apellido Materno</label>
-
-                                                <div class="col-md-6">
-                                                    <input id="name" type="text" class="form-control" name="a_materno" value="{{ old('a_materno') }}"  autofocus>
-
-                                                    @if ($errors->has('a_materno'))
+                                            <div class="form-group {{ $errors->has('a_materno') ? ' has-error' : '' }}">
+                                                <label for="a_materno" class="col-md-3 control-label">Apellido Materno</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="a_materno" id="a_materno" class="form-control"  value="{{ old('a_materno') }}" autofocus>
+                                                    @if ($errors->has('a_m'))
                                                         <span class="help-block">
-                                                            <strong>{{ $errors->first('a_materno') }}</strong>
+                                                            <strong>{{ $errors->first('a_m') }}</strong>
                                                         </span>
                                                     @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-2 col-md-offset-10">
+                                        <a href="#usuario" data-toggle="tab" id="btn1" class="btn btn-primary">Siguiente</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="usuario" class="tab-pane fade">
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row"> <!-- tipo de persona -->
+                                            <div class="form-group">
+                                                <label for="" class="col-md-3 control-label">Tipo de persona</label>
+                                                <div class="col-md-8">
+                                                    <select name="tipo_persona" id="tipopersona" class="form-control">
+                                                        <option value="Fisica">Física</option>
+                                                        <option value="Moral">Moral</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <br>
+                                        <div class="row"> <!-- razon-social -->
+                                            <div class="form-group " id="row_razon">
+                                                <label for="razon" class="col-md-3 control-label">Razon Social</label>
+                                                <div class="col-md-8">
+                                                    <input type="text"  name="razon" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row"> <!-- Curp -->
+                                            <div class="form-group">
+                                                <label for="curp" class="col-md-3 control-label">CURP</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="curp" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row"><!-- celular -->
+                                            <div class="form-group {{ $errors->has('cel') ? ' has-error' : '' }}"> 
+                                                <label for="cel" class="col-md-3 control-label">Celular</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="cel" class="form-control" value="{{ old('cel') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row"> <!-- telefono -->
+                                            <div class="form-group {{ $errors->has('tel') ? ' has-error' : '' }}">
+                                                <label for="" class="col-md-3 control-label">Teléfono</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="tel" class="form-control" value="{{ old('tel') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2 ">
+                                        <a href="#cuenta" data-toggle="tab" class="btn btn-info">Anterior</a>
+                                    </div>
+
+                                    <div class="col-md-2 col-md-offset-7">
+                                        <a href="#contacto" data-toggle="tab" class="btn btn-primary">Siguiente</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="contacto" class="tab-pane fade">
+                                <br>
+                                <div class="row">
+                                   <div class="col-md-4"> <!-- columna1 -->
+                                       <div class="row"> <!-- calle -->
+                                           <div class="form-group {{ $errors->has('calle') ? ' has-error' : '' }}">
+                                               <label for="calle" class="col-md-3 control-label">Calle</label>
+                                               <div class="col-md-8">
+                                                   <input type="text" name="calle" class="form-control"value="{{ old('calle') }}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div class="col-md-4"> <!-- columna2 -->  
+                                       <div class="row">
+                                           <div class="form-group {{ $errors->has('nint') ? ' has-error' : '' }}">
+                                                <label for="nint" class="col-md-3 control-label">#Interior</label>
+                                               <div class="col-md-8">
+                                                   <input type="text" name="nint" class="form-control" value="{{ old('nint') }}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div class="col-md-4"> <!-- columna3 -->
+                                       <div class="row">
+                                           <div class="form-group{{ $errors->has('next') ? ' has-error' : '' }}">
+                                                <label for="next" class="col-md-3 control-label">#Exterior</label>
+                                               <div class="col-md-8">
+                                                   <input type="text" name="next" class="form-control" value="{{ old('next') }}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-4">
                                         <div class="row">
-                                             <div class="form-group{{ $errors->has('tel') ? ' has-error' : '' }}">
-                                                <label for="tel" class="col-md-4 control-label">Teléfono</label>
-
-                                                <div class="col-md-6">
-                                                    <input id="tel" type="text" class="form-control" name="tel" value="{{ old('tel') }}"  autofocus>
-
-                                                    @if ($errors->has('tel'))
-                                                        <span class="help-block">
-                                                            <strong>{{ $errors->first('tel') }}</strong>
-                                                        </span>
-                                                    @endif
+                                            <div class="form-group{{ $errors->has('cp') ? ' has-error' : '' }}">
+                                                <label for="cp" class="col-md-3 control-label">CP</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control" name="cp"  value="{{ old('cp') }}">
                                                 </div>
                                             </div>
                                         </div>
-                                      </div>
                                     </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header" id="headingTwo">
-                                        <h5 class="mb-0">
-                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                      Datos de Cuenta de Usuario
-                                        </button>
-                                        </h5>
-                                    </div>
-                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                                                    <label for="email" class="col-md-4 control-label">Correo electronico</label>
-
-                                                    <div class="col-md-6">
-                                                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-
-                                                        @if ($errors->has('email'))
-                                                            <span class="help-block">
-                                                                <strong>{{ $errors->first('email') }}</strong>
-                                                            </span>
-                                                        @endif
-                                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="form-group{{ $errors->has('colonia') ? ' has-error' : '' }}">
+                                                <label for="Colonia" class="col-md-3 control-label">Colonia</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control" name="colonia" value="{{ old('colonia') }}">
                                                 </div>
                                             </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                                                    <label for="password" class="col-md-4 control-label">Contraseña</label>
-
-                                                    <div class="col-md-6">
-                                                        <input id="password" type="password" class="form-control" name="password" required>
-
-                                                        @if ($errors->has('password'))
-                                                            <span class="help-block">
-                                                                <strong>{{ $errors->first('password') }}</strong>
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <label for="password-confirm" class="col-md-4 control-label">Confirme la contraseña</label>
-
-                                                    <div class="col-md-6">
-                                                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
-                                                    </div>
-                                                </div>
-                                            </div>   
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header" id="headingThree">
-                                      <h5 class="mb-0">
-                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                          Datos de Contacto
-                                        </button>
-                                      </h5>
-                                    </div>
-                                    <div id="collapseThree" class="collapse " aria-labelledby="headingThree" data-parent="#accordion">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="form-group{{ $errors->has('domicilio') ? ' has-error' : '' }}">
-                                                    <label for="password" class="col-md-4 control-label">Domicilio</label>
-                                                    <div class="col-md-6">
-                                                        <input id="domicilio" type="text" class="form-control" name="domicilio" placeholder="Calle y Número" required>
-                                                            @if ($errors->has('domicilio'))
-                                                            <span class="help-block">
-                                                                <strong>{{ $errors->first('domicilio') }}</strong>
-                                                            </span>
-                                                            @endif
-                                                    </div>
-                                                </div> 
-                                            </div>
-                                            <br>
-                                            <div class="row">
-                                                    <div class="form-group{{ $errors->has('colonia') ? ' has-error' : '' }}">
-                                                        <label for="colonia" class="col-md-4 control-label">Colonia</label>
-                                                        <div class="col-md-6">
-                                                            <input id="colonia" type="text" class="form-control" name="colonia" required>
-                                                                @if ($errors->has('colonia'))
-                                                                <span class="help-block">
-                                                                    <strong>{{ $errors->first('colonia') }}</strong>
-                                                                </span>
-                                                                @endif
-                                                        </div>
-                                            </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <label for="municipio" class="col-md-4 control-label">Municipio</label>
-                                                    <div class="col-md-6">
-                                                        <select class="custom-select form-control">
-                                                          <option selected>Seleccione el Municipio</option>
-                                                          <option value="1">Armería</option>
-                                                          <option value="2">Colima</option>
-                                                          <option value="3">Comala</option>
-                                                          <option value="4">Coquimatlán</option>
-                                                          <option value="5">Cuahutémoc</option>
-                                                          <option value="6">Ixtlahuacán</option>
-                                                          <option value="7">Manzanillo</option>
-                                                          <option value="8">Minatitlán</option>
-                                                          <option value="9">Tecomán</option>
-                                                          <option value="10">Villa de Álvarez</option>
-                                                        </select>                                                           
-                                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="form-group {{ $errors->has('municipio') ? ' has-error' : '' }}">
+                                                <label for="municipio" class="col-md-3 control-label">Municipio</label>
+                                                <div class="col-md-8">
+                                                    <select name="municipio" id="municipio" class="form-control" value="{{ old('municipio') }}">
+                                                        <option value="Armería">Armería</option>
+                                                        <option selected value="Colima">Colima</option>
+                                                        <option value="Comala">Comala</option>
+                                                        <option value="Coquimatlán">Coquimatlán</option>
+                                                        <option value="Cuahutémoc">Cuahutémoc</option>
+                                                        <option value="Ixtlahuacán">Ixtlahuacán</option>
+                                                        <option value="Manzanillo">Manzanillo</option>
+                                                        <option value="Minatitlán">Minatitlán</option>
+                                                        <option value="Tecomán">Tecomán</option>
+                                                        <option value="Villa de Álvarez">Villa de Álvarez</option>
+                                                    </select>
                                                 </div>
-                                            </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="col-md-9 col-md-offset-1">
-                                                    <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" id="dom" name="dom2">
-                                                        <label class="form-check-label" for="exampleCheck1">El domicilio para Notificar es diferente al anterior</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div  id="dom2">
-               
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div> 
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-2 col-md-offset-4">
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="form-group {{ $errors->has('localidad') ? ' has-error' : '' }}">
+                                                <label for="localidad" class="col-md-3 control-label">Localidad</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="localidad" placeholder="Ej. El trapiche" class="form-control" value="{{ old('localidad') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-10 col-md-offset-1">
+                                       <div class="row">
+                                           <label for="referencias" class="control-label">Referencias</label>
+                                       </div>
+                                       <div class="row">
+                                           <div class="form-group {{ $errors->has('referencias') ? ' has-error' : '' }}">
+                                               <textarea name="referencias" id="referencias" cols="30" rows="2" class="form-control" value="{{ old('referencias') }}"></textarea>
+                                           </div>
+                                       </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-2 col-md-offset-1">
+                                        <div class="form-group">
+                                            <a href="#usuario" data-toggle="tab" class="btn btn-info">Anterior</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 col-md-offset-2">
                                         <button type="submit" class="btn btn-primary">
-                                           Registrar
+                                           Registrarse
                                         </button>
                                     </div>
-                                    <div class="col-md-2">
-                                        <a href="/login" class="btn btn-danger">Cancelar</a>
+                                    <div class="col-md-2 col-md-offset-1">
+                                         <a href="/login" class="btn btn-danger">Cancelar</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>   
+                        <br>
+                    </form>
                 </div>
             </div>
         </div>
@@ -234,27 +305,7 @@
 </div>
 @endsection
 @section('script')
-<script src="/bower_components/jquery/dist/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="/bower_components/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" >
-    $(document).ready(function(){
-        $('#collapseOne').collapse('show');
-        
-        $('#dom').on('change',function(){
-            var ban=false;
-            if($('#dom').prop('checked')){
-              ban=true;
-            }else{
-                ben=false;
-            }
-            if(ban==true){
-                 $('#dom2').append("<hr><div class='row'><h4>Domicilio para notificar</h4></div><div class='row'><div class='form-group'><label for='domicilio2' class='col-md-4 control-label'>Domicilio</label><div class='col-md-6'><input id='domicilio' type='text' class='form-control' name='domicilio2' placeholder='Calle y Número' required></div></div> </div><br><div class='row'><div class='form-group'><label for='colonia' class='col-md-4 control-label'>Colonia</label><div class='col-md-6'><input id='colonia' type='text' class='form-control' name='colonia2' required></div></div><br><div class='row'><div class='form-group'><label for='municipio2' class='col-md-4 control-label'>Municipio</label><div class='col-md-6'><select class='custom-select form-control' name='municipio2'><option selected>Seleccione el Municipio</option><option value='1'>Armería</option><option value='2'>Colima</option><option value='3'>Comala</option><option value='4'>Coquimatlán</option><option value='5'>Cuahutémoc</option><option value='6'>Ixtlahuacán</option><option value='7'>Manzanillo</option><option value='8'>Minatitlán</option><option value='9'>Tecomán</option><option value='10'>Villa de Álvarez</option></select></div></div></div><br>");
-             }else{
-                $('#dom2 >').remove();
-             }
-        });
-    });
+<script>
     
 </script>
 @endsection
