@@ -55,33 +55,33 @@
     
 		
 </div>
-  <div class="modal" id="myModalmostrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-body">
-          <div class="col-sm-16">
-            <div class="widget-box">
-              <div class="widget-body">
-                <div class="modal-body datagrid table-responsive" style="padding: 0px;">
-                  <div class="panel-body" id="editar_resul" style="padding: 0px;">
-                    <div class="col-md-12">
-                      <object id="object" type="application/pdf" data="" width="100%" height="600">
-                      <param id="param" name="src" value="" />
-                    </object>
-                    </div> 
-                  </div>
+<div class="modal" id="myModalmostrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="col-sm-16">
+          <div class="widget-box">
+            <div class="widget-body">
+              <div class="modal-body datagrid table-responsive" style="padding: 0px;">
+                <div class="panel-body" id="editar_resul" style="padding: 0px;">
+                  <div class="col-md-12">
+                    <object id="object" type="application/pdf" data="" width="100%" height="600">
+                    <param id="param" name="src" value="" />
+                  </object>
+                  </div> 
                 </div>
               </div>
             </div>
           </div>
-        </div>                            
-      </div>
+        </div>
+      </div>                            
     </div>
   </div>
+</div>
 @endsection
 @section('script')
 <script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="/js/nuevademanda.js" type="text/javascript"></script>
+<script src="/js/seguimiento.js" type="text/javascript"></script>
 <script src="/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 @endsection

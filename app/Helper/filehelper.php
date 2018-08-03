@@ -17,7 +17,9 @@ class filehelper
 
 	static function uploadfile2($file,$idexp,$serie){
 		// subir el key al servidor
-		 	$path ='/Historico/'.$serie.'/'.$idexp; // ruta destino
+           
+		 	$f=date('Y');
+            $path ='/Historico/'.$serie.'/'.$idexp; // ruta destino
             $nombre = $file->getClientOriginalName();
             //dd($nombre);
             if( $file->move(public_path().$path.'/', $nombre)){

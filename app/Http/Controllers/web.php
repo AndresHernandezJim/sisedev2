@@ -1,7 +1,7 @@
 <?php
 
 Route::get('/', function () {
-    return view('Auth.login');
+    return redirect('/login');
 });
 
 Auth::routes();
@@ -56,7 +56,7 @@ Route::group(['middleware'=>'proyectista'],function(){
 			Route::get('','proyectistaController@expedientes');
 			Route::get('ver/{id}','proyectistaController@ver');
 			Route::get('redactar/{id}','proyectistaController@redactar');
-			Route::POST('agregar','proyectistaController@agregarsentecia');
+			Route::get('agregar','proyectistaController@agregarsentecia');
 			Route::post('notificar','proyectistaController@notificar');
 		});
 		Route::group(['prefix'=>'proyectos'],function(){
@@ -165,10 +165,6 @@ Route::group(['middleware'=>'magistrado'],function(){
 		Route::group(['prefix'=>'notificaciones'],function(){
 			Route::get('','magistradoController@notif');
   			Route::post('update','magistradoController@updatenotif');
-		});
-		Route::group(['prefix'=>'proyectos'],function(){
-			Route::get('','magistradoController@proyectos');
-			Route::get('expediente/{id}','magistradoController@proyexpe');
 		});
 		Route::get('eliminardocumento','magistradoController@deldocumento');
 		ROute::get('restaurardocumento','magistradoController@resdocumento');

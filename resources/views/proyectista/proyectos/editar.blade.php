@@ -157,7 +157,8 @@
 			                	<div class="input-group">
 					                <input type="hidden" name="id_receptor"  id="i_rec" value="{{$destino}}">
 					                <input type="hidden" name="id_expediente" id="i_exp" value="{{$exp}}">
-			                 		 <input type="text" name="message" id="chmensaje" placeholder="Escriba su mensaje..." class="form-control">
+					                <input type="hidden" name="id_pro" id="id_pro" value="{{$p->id_proyecto}}">
+			                 		 <input type="text" name="message" id="chmensaje" placeholder="Escriba su mensaje..." class="form-control" autocomplete="off">
 			                      		<span class="input-group-btn">
 			                        		<button type="submit" class="btn btn-primary btn-flat">Enviar</button>
 			                      		</span>
@@ -282,11 +283,12 @@ $('#chatmensaje').submit(function(e){
   var msj=$('#chmensaje').val();
   var exp=$('#i_exp').val();
   var dest=$('#i_rec').val();
+  var id_p=$('#id_pro').val();
   var TOKEN = $('meta[name="csrf-token"]').attr('content');
   $.ajax({
   	type:"POST",
   	url:url,
-  	data:{_token:TOKEN,msj:msj,id_exp:exp,receptor:dest},
+  	data:{_token:TOKEN,msj:msj,id_exp:exp,receptor:dest,id_pro:id_p},
   	success:function(data){
   		data=JSON.parse(data);
   		console.log(data);

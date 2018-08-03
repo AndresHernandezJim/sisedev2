@@ -165,8 +165,9 @@ class userController extends Controller
         return json_encode($data);
     }
     public function guardar(Request $request){//almacena la demanda nueva
-    	//dd($request->all());
+    	// dd($request->all());
     	$folio=$request->exp;
+        $serie=$request->serie;
         $fecha=date("Y-m-d H:i:s");
         $usuario=$request->id_usuario;
         // Almacenar expediente
@@ -177,10 +178,9 @@ class userController extends Controller
         $exp->expediente=$folio;
         $exp->status=0;
         $exp->fecha=$fecha;
-        $exp->serie=$request->serie;
+        $exp->serie=$serie;
         $exp->save();
         $id_exp=$exp->id;
-        $id_exp=$exp->expediente;
         // almacenar seguimiento de la demanda;
         $seg=new seguimiento;
         $seg->fecha=$fecha;
@@ -212,13 +212,13 @@ class userController extends Controller
         $tipos=$request->tipo;
         $cant=0;
         foreach ($archivo as $key) {
-            $avatar=filehelper::uploadfile($key,$expediente,$request->serie);
+            $avatar=filehelper::uploadfile($key,$folio,$serie);
             $anexo=new anexo;
             $anexo->id_Tipo=$tipos[$cant];
             $anexo->Folio=$request->exp.'_'.$cant;
             $anexo->id_Expediente=$id_exp;
             $anexo->FechaUp=$fecha;
-            $anexo->PathAnexo='./Historico/'.$request->serie.'/'.$expediente;
+            $anexo->PathAnexo='./Historico/'.$serie.'/'.$folio;
             $anexo->NomFile=$avatar;
             $anexo->Status=0;
             $anexo->save();
@@ -239,7 +239,7 @@ class userController extends Controller
         $m=new mensajes;
         $m->usuario_origen=$usuario;
         $m->usuario_destino=$usuario;
-        $m->mensaje="Has registrado el Expediente ".$expediente.'/'.$request->serie;
+        $m->mensaje="Has registrado el Expediente ".$folio.'/'.$serie;
         $m->estatus=0;
         $m->created_at=date('Y-m-d H:i:s');
         $m->updated_at=null;
@@ -247,7 +247,7 @@ class userController extends Controller
         $m=new mensajes;
         $m->usuario_origen=$usuario;
         $m->usuario_destino=2;
-        $m->mensaje="El usuario ".$us->nombre." ha registrado el Expediente ".$expediente.'/'.$request->serie."ver la sección Nuevas entradas";
+        $m->mensaje="El usuario ".$us->nombre." ha registrado el Expediente ".$folio.'/'.$serie." ver la sección Nuevas entradas";
         $m->estatus=0;
         $m->created_at=date('Y-m-d H:i:s');
         $m->updated_at=null;

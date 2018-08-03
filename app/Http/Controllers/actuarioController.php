@@ -28,7 +28,7 @@ class actuarioController extends Controller
             'actuario'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',5)->get(),
             'proyectista'=>\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$raw)->where('r.role_id',4)->get(),
             'tipodoc'=>\DB::table('acuerdotipo')->where('nivel','3')->select('id','Tipo')->orderby('Tipo','DESC')->get(),
-            'expediente'=>\DB::select("SELECT distinct v.id,v.fecha,v.expediente,v.rdemandado,v.demandante,v.rdemandante,v.resumen,v.status,v.avatar,v.serie,v.oficiales,s.id_persona AS secretario FROM v_expedientes3 v LEFT JOIN seguimiento s ON v.id = s.id_exp WHERE s.id_modulo = 3 AND s.movimiento = 'Salida' AND v.id IN (SELECT id_exp FROM envios WHERE id_receptor = ? )",[$id]),
+            'expediente'=>\DB::select("SELECT distinct v.id,v.fecha,v.expediente,v.rdemandado,v.demandante,v.rdemandante,v.resumen,v.status,v.avatar,v.serie,v.oficiales,s.id_persona AS secretario FROM v_expedientes3 v LEFT JOIN seguimiento s ON v.id = s.id_exp WHERE s.id_modulo = 4 AND s.movimiento = 'Entrada' AND v.id IN (SELECT id_exp FROM envios WHERE id_receptor = ? )",[$id]),
             'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
             'rolid'=>$id,
             'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get()
@@ -162,7 +162,7 @@ class actuarioController extends Controller
         $archivo=$request->pdf_file;
         $fecha = $request->date.' '.$time; // Fecha de expediente
         $fecha1= $fecha;
-        $fecha2 = $request->datelim." 00:00:00";
+        $fecha2 = $request->datelim." ".$time;
         $datelim = $fecha2;
         $demandado =$request->id_demandado;
         $demandante=$request->id_demandante;

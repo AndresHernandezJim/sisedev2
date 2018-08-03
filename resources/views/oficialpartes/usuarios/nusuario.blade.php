@@ -52,7 +52,7 @@
                                                 <label for="email" class="col-md-3 control-label">Correo electronico</label><span style="color: red;"> *</span>
 
                                                 <div class="col-md-6">
-                                                    <input id="email" type="email" class="form-control" name="email" required autocomplete="section-blue email">
+                                                    <input id="email" type="email" class="form-control" name="email" required autocomplete="section-blue email" autocomplete="off">
                                                 </div>
                                                 <input type="hidden" id="haycorreo" val="0">
                                             </div>
@@ -67,7 +67,7 @@
                                                 <label for="password" min="6" class="col-md-3 control-label">Contraseña</label><span style="color: red;"> *</span>
 
                                                 <div class="col-md-6">
-                                                    <input id="password" type="password" class="form-control" name="password" required>
+                                                    <input id="password" autocomplete="off" type="password" class="form-control" name="password" required>
                                                 </div>
                                             </div>
                                         </div>

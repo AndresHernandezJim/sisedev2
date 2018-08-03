@@ -50,30 +50,36 @@
             						<td>{{$k->demandante}} <br>{{$k->rdemandante}}</td>
                                     <td>{{$k->resumen}}</td>
 						            <td style="text-align: center;">
-                                        @if($k->status==3)
-                                            <a href="#" class="btn btn-success btn-xs " onclick="enviar1({{$k->id}});" title="Turnar el Expediente al Proyectista">
-                                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
-                                            <a href="#" class="btn btn-primary btn-xs " onclick="agregar({{$k->id}},{{$k->serie}})" title="Agregar un Documento al Expediente">
+                                        @if($k->status==2)
+                                             <a href="#" class="btn btn-success btn-xs" disabled data-content="El Expediente no puede ser Turnado al Proyectista, deben anexarse acuerdos" data-toggle="popover" rel="popover" data-placement="left" title="Enviar al Proyectista">
+                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
+                                            <a href="#" class="btn btn-primary btn-xs " onclick="agregar({{$k->id}},{{$k->serie}})" title="Agregar Acuerdo" data-content="Agregar un acuerdo al expediente {{$k->expediente}}/{{$k->serie}}" data-placement="left" data-toggle="popover" rel="popover">
                                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
-                                            <a href="#" class="btn btn-info btn-xs" onclick="notificar2({{$k->id}});"  title="Enviar el Expediente al Actuario para Notificar">
-                                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
-
+                                             <a href="#" class="btn btn-info btn-xs" disabled title="Enviar al Actuario para notificar" data-toggle="popover" data-placement="left" data-content="No es posible enviar, Necesita ingresar acuerdos" rel="popover">
+                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificado</a>
+                                        @elseif($k->status==3)
+                                                <a href="#" class="btn btn-success btn-xs " onclick="enviar1({{$k->id}});" title="Enviar al Proyectista" data-toggle="popover" data-placement="left" data-content="Turnar el Expediente {{$k->expediente}}/{{$k->serie}} al Proyectista para la redacción del proyecto de sentencia">
+                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
+                                                <a href="#" class="btn btn-primary btn-xs " onclick="agregar({{$k->id}},{{$k->serie}})" data-toggle="popover" data-content="Agregar un acuerdo al Expediente {{$k->expediente}}/{{$k->serie}}" data-placement="left" rel="popover" title="Agregar Acuerdo">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
+                                                <a href="#" class="btn btn-info btn-xs" onclick="notificar2({{$k->id}});" data-toggle="popover" rel="popover" data-placement="left" title="Enviar al Actuario para notificar"  data-content="Enviar el expediente {{$k->expediente}}/{{$k->serie}} al Actuario para notificar el acuerdo">
+                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
                                         @elseif($k->status>=4)
 						                      
                                             @if($k->status >= 6)
-                                                <a href="#" class="btn bg-orange btn-xs" disabled title="El Expediente ya ha sido Turnado al Proyectista">
-                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviado</a>
-                                                <a href="#" class="btn btn-primary btn-xs " disabled title="No es posible agregar más documentos, el expediente ya está en proceso de redaccion de proyecto de sentencia">
+                                                <a href="#" class="btn bg-orange btn-xs" disabled data-toggle="popover" data-placement="left"  data-content="El Expediente ya ha sido Turnado al Proyectista para la redacción del proyecto de sentencia" title="Enviar al Proyectista">
+                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
+                                                <a href="#" class="btn btn-primary btn-xs " disabled data-toggle="popover" data-content="Por el momento no es posible agregar más acuerdos, el expediente {{$k->expediente}}/{{$k->serie}} se encuentra en proceso de redacción de proyecto de sentencia, intente más tarde" data-placement="left" title="Agregar Acuerdo">
                                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
-                                                <a href="#" class="btn btn-info btn-xs" disabled title="No es posible notificar, el Expediente ya está en proceso de redacción de proyecto de sentencia">
-                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificado</a>
+                                                <a href="#" class="btn btn-info btn-xs" disabled data-toggle="popover" data-placement="left" title="Enviar al Actuario para notificar" data-content="Por le momento no es posible notificar, el Expediente {{$k->expediente}}/{{$k->serie}}, éste se encuentra en proceso de redacción de proyecto de sentencia">
+                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
                                             @else
-                                                <a href="#" class="btn bg-orange btn-xs" disabled title="No es posible turnar el expediente, se encuentra en proceso de notificación">
-                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviado</a>
-                                                <a href="#" class="btn btn-primary btn-xs " disabled title="No es posible agregar más documentos, el expediente se encuentra en proceso de notificación">
+                                                <a href="#" class="btn bg-orange btn-xs" disabled data-toggle="popover" data-placement="left" data-content="No es posible turnar el expediente {{$k->expediente}}/{{$k->serie}}  al Proyectista, éste se encuentra en proceso de notificación" title="Enviar al Proyectista">
+                                                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Enviar</a>
+                                                <a href="#" class="btn btn-primary btn-xs " disabled data-toggle="popover" data-placement="left"data-content="Por el momento no es posible agregar más documentos, el expediente  {{$k->expediente}}/{{$k->serie}} se encuentra en proceso de notificación" title="Agregar Acuerdo">
                                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Acuerdo</a>
-                                                <a href="#" class="btn btn-info btn-xs" disabled title="No es posible notificar, el Expediente ya está en proceso Notificación por parte del Actuario">
-                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificado</a>
+                                                <a href="#" class="btn btn-info btn-xs" disabled  data-toggle="popover" data-placement="left"data-content="No es posible enviar al Actuario para notificar, el Expediente {{$k->expediente}}/{{$k->serie}} se encuentra en proceso Notificación " title="Enviar al Actuario para notificar">
+                                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
                                             @endif
                                         
                                         @endif

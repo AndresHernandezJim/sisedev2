@@ -140,16 +140,31 @@ class magistradoController extends Controller
     	dd($request->all());
     }
     
-    public function demandas(){
+    public function demandas(Request $request){
+         $id=$request->session()->get('id');
         $raw1=\DB::raw("concat(d.nombre,' ',d.a_paterno,' ',d.a_materno) demandante");
         $raw2=\DB::raw("concat(d1.nombre,' ',d1.a_paterno,' ',d1.a_materno) demandado");
         $raw3=\DB::raw('date(e.fecha) as fecha');
         $raw4=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as Nombre");
-        $data=array('exp'=>\DB::table('expediente as e')->join('users as d','d.id','e.id_demandado')->join('users  as d1','d1.id','e.id_demandante')->select('e.id','e.expediente',$raw3,$raw1,$raw2,'e.descripcion as resumen')->get(),
-                  'tipodocumento'=>\DB::table('tipo_documento')->where('rol_usuario','2')->select('id','tipo')->get(),
+        $rawchat=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as remitente, TIMEDIFF(now(),c.fecha_creacion) as tiempo");
+        $cantch=\DB::table('chat')->select(\DB::raw('count(id) as cantidad'))->where('id_receptor',$id)->where('estado',0)->first();
+        $mchat=\DB::table('chat as c')->join('users as u','c.id_origen','u.id')
+                ->select('c.id','c.id_exp','u.avatar','c.estado','c.id_proyecto','c.serie',$rawchat,'c.mensaje')->where('c.id_receptor',$id)->orderby('c.id','DESC')->get();
+        foreach ($mchat as $k) {
+            $hora=$k->tiempo;
+            list($horas, $minutos, $segundos) = explode(':', $hora);
+            $hora_en_segundos = ($horas * 3600 ) + ($minutos * 60 ) + $segundos;
+            $minutos=$hora_en_segundos/60;
+            $hora=queryhelper::tohours($minutos,"");
+            $k->tiempo=$hora;
+        }
+         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
+        $data=array('exp'=>\DB::select('select v.id_expediente as id, v.expediente, v.fechasis as fecha, v.id_razonsocial, v.Demandado as demandado, v.id_demandante, v.Demandante as demandante, v.Resumen as resumen, e.serie from v_seguimiento v join expediente e on v.id_expediente=e.id'),
+                  'tipodocumento'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),
                   'fecha'=>date('Y-m-d'),
                    'secretarios'=>\DB::table('users as u')->join('role_user as rs','u.id','rs.user_id')->select('u.id',$raw4)->where('rs.role_id','3')->get(),
                     'rol'=>'magistrado',
+                    'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat,'cant'=>$ca->cantidad,'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),
             );
        //dd($data);
  
@@ -167,7 +182,7 @@ class magistradoController extends Controller
         //dd($data);
         return json_encode($data);
     }
-     public function resdocumento(Request $request){
+    public function resdocumento(Request $request){
         //return json_encode($request->all());
        if($d=\DB::table('acuerdotipo')->where('id',$request->id)->update(['estatus'=>1])){
         $data=array('mensaje'=>"El tipo de documento se reestablecio de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get());
@@ -202,6 +217,37 @@ class magistradoController extends Controller
             $data=array('mensaje'=>"El tipo de documento se actualizó de forma correcta",'estatus'=>1,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',4)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',4)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get());
             return json_encode($data);
         }
+    }
+    public function proyectos(Request $request){ //manda la vista del listado de los expedientes que tienen proyecto
+        $id=$request->session()->get('id');
+        $rawchat=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as remitente, TIMEDIFF(now(),c.fecha_creacion) as tiempo");
+        $cantch=\DB::table('chat')->select(\DB::raw('count(id) as cantidad'))->where('id_receptor',$id)->where('estado',0)->first();
+        $mchat=\DB::table('chat as c')->join('users as u','c.id_origen','u.id')
+                ->select('c.id','c.id_exp','u.avatar','c.estado','c.id_proyecto','c.serie',$rawchat,'c.mensaje')->where('c.id_receptor',$id)->orderby('c.id','DESC')->get();
+        foreach ($mchat as $k) {$hora=$k->tiempo;list($horas, $minutos, $segundos) = explode(':', $hora);$hora_en_segundos=($horas*3600)+($minutos*60)+$segundos;$minutos=$hora_en_segundos/60;$hora=queryhelper::tohours($minutos,"");$k->tiempo=$hora;}
+        $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
+        $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',4)->orwhere('nivel',5)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',4)->orwhere('nivel',5)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat,
+            'exp'=>\DB::select("select v.id,v.expediente,v.serie,v.fecha, v.rdemandado as demandado, v.demandante,v.status from v_expedientes v where v.id in(select DISTINCT id_exp from proyectos)"));
+        //dd($data);
+        return view('magistrado.proyectos.lista',$data);
+    }
+    public function proyexpe($idexp,Request $request){
+        $id=$request->session()->get('id');
+        $rawchat=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as remitente, TIMEDIFF(now(),c.fecha_creacion) as tiempo");
+        $cantch=\DB::table('chat')->select(\DB::raw('count(id) as cantidad'))->where('id_receptor',$id)->where('estado',0)->first();
+        $mchat=\DB::table('chat as c')->join('users as u','c.id_origen','u.id')
+                ->select('c.id','c.id_exp','u.avatar','c.estado','c.id_proyecto','c.serie',$rawchat,'c.mensaje')->where('c.id_receptor',$id)->orderby('c.id','DESC')->get();
+        foreach ($mchat as $k) {
+            $hora=$k->tiempo;
+            list($horas, $minutos, $segundos) = explode(':', $hora);
+            $hora_en_segundos = ($horas * 3600 ) + ($minutos * 60 ) + $segundos;
+            $minutos=$hora_en_segundos/60;
+            $hora=queryhelper::tohours($minutos,"");
+            $k->tiempo=$hora;
+        }
+        $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
+        $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',4)->orwhere('nivel',5)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',4)->orwhere('nivel',5)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat);
+        return view('magistrado.proyectos.expediente',$data);
     }
 
 }

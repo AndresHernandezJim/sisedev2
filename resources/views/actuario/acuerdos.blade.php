@@ -55,32 +55,28 @@
 							<tbody>
 								@foreach($expediente as $k)
 								<tr data-child-value="{{$k->id}}">
-									<td class="details-control" style="color: blue; text-align: center; font-weight: bold;"><a class="btn btn-primary btn-sm" data-toggle="popover" data-content="Visauliza los documentos registrados en el expediente" rel="popover" placement="top" title="Expediente {{$k->expediente}}/{{$k->serie}}">{{$k->expediente}}</a></td>
+									<td class="details-control"><center><a class="btn btn-primary btn-sm" data-toggle="popover" data-content="Visauliza los documentos registrados en el expediente" rel="popover" placement="top" title="Expediente {{$k->expediente}}/{{$k->serie}}">{{$k->expediente}}</a></center></td>
             						<td>{{$k->fecha}}</td>
             						<td>{{$k->rdemandado}}</td>
             						<td>{{$k->demandante}} <br>{{$k->rdemandante}}</td>
                                     <td>{{$k->resumen}}</td>
 						            <td style="text-align: center;">
-                                        @if($k->status ==5)
-                                        <a href="#" class="btn btn-success btn-xs" onclick="enviarsecre({{$k->id}},{{$k->secretario}});"  title="Retornar el expediente al Secretario de Acuerdos">
-                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Enviar</a>
-                                        <a href="#" class="btn btn-success btn-xs" onclick="agregarpdf({{$k->id}},{{$k->serie}});"  title="Agregar documento">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar</a>
-                                        @elseif($k->status==4 || $k->status=9)
-                                        <a href="#" class="btn btn-info btn-xs" onclick="notificar2({{$k->id}},{{$k->serie}});"  title="Enviar el Expediente a los Involucrados para Notificar">
+                                        @if($k->status==3)
+                                        <a href="#" class="btn btn-danger btn-xs" disabled data-toggle="popover" data-placement="left" data-content="Por el momento no se pueden realizar acciones, el expediente {{$k->expediente}}/{{$k->serie}} se encuentra en manos del Secretario de Acuerdos" title="No permitido">
+                                        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Sin acción</a>
+                                        @elseif($k->status==4||$k->status==9)
+                                         <a href="#" class="btn btn-info btn-xs" onclick="notificar2({{$k->id}},{{$k->serie}});" data-toggle="popover" data-placement="left" data-content="Enviar la notificación  del Expediente a los Involucrados" title="Notificar">
                                         <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Notificar</a>
-                                        @elseif($k->status==3)
-                                        <a href="#" class="btn btn-danger btn-xs" disabled title="Ésta acción no está permitida por el momento">
-                                        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> No Permitido</a>
+                                        @elseif($k->status==5)
+                                        <a href="javascript:void(0)" class="btn btn-success btn-sm" onclick="enviarsecre({{$k->id}},{{$k->secretario}});" data-toggle="popover" data-placement="left" data-content="Retornar el Expediente {{$k->expediente}}/{{$k->serie}} al Secretario de Acuerdos despues de notificar a las partes"><span class="glyphicon glyphicon-envelope"></span> Enviar</a>
+                                        <a href="javascript:void(0)" class="btn bg-navy btn-sm" onclick="agregarpdf({{$k->id}},{{$k->serie}});" data-toggle="popover" data-placement="left" data-content="Agregar un nuevo documento de Notificación" title="Agregar Documento"><span class="glyphicon glyphicon-plus"></span> Documento</a>
                                         @elseif($k->status>=6)
-                                        <a href="#" disabled class="btn btn-danger btn-xs " title="Ésta acción no está permitida, el expediente ya ha sido procesado"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> No Permitido</a>
+                                        <a href="#" disabled class="btn btn-danger btn-xs " data-toggle="popover" data-placement="left"data-content="Por el momento no hay más acciones para el expediente {{$k->expediente}}/{{$k->serie}}, éste se encuentra en proceso de redaccion de Sentencia" title="No permitido"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Sin acción</a>
                                         @endif
 						            </td>
                                     <td>
                                         <img src="/img/sv.png" style="width:25px;height:25px;"  title="A tiempo" class="img-circle" alt="A tiempo">
-                                        @if($k->status>5 && $k->status<7)
-                                            <img src="{{$k->avatar}}" title="{{$k->oficiales}}" class="img-circle zoom" alt="{{$k->oficiales}}">
-                                        @endif
+                                        
                                     </td>
 								</tr>
 								@endforeach
@@ -250,7 +246,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Fecha limite:</label>
-                                        <input  type="date" id="fechalim" name="datelim" required value="@php  $date=date('Y-m-d',strtotime('+2 day')); echo $date @endphp" class="form-control">
+                                        <input  type="date" id="fechalim" name="datelim" required value="@php  function sumasdiasemana($fecha,$dias){$datestart= strtotime($fecha);$datesuma = 15 * 86400;$diasemana = date('N',$datestart);$totaldias = $diasemana+$dias;$findesemana = intval( $totaldias/5) *2 ; $diasabado = $totaldias % 5 ; if ($diasabado==6) $findesemana++;if ($diasabado==0)$findesemana=$findesemana-2;$total = (($dias+$findesemana) * 86400)+$datestart ; return $fechafinal = date('Y-m-d', $total);}$sumarDias=2;$entre1 = sumasdiasemana(date('Y-m-d'),$sumarDias);echo $entre1 ; @endphp" class="form-control">
                                     </div>
                                 </div>
                             </div>

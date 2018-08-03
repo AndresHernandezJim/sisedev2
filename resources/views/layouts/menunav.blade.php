@@ -50,8 +50,7 @@
               <i class="fa fa-angle-left pull-right"></i>
             </span></a>
 		<ul class="treeview-menu">
-			<li><a href="#"><i class=" fa fa-folder-open"></i><span>Proyectos de sentencias</span></a></li>
-			<li><a href="#"><i class="fa fa-map-marker"></i><span>Seguimiento</span></a></li>
+			<li><a href="/magistrado/proyectos"><i class=" fa fa-folder-open"></i><span>Proyectos de sentencias</span></a></li>
 			<li><a href="#"><i class="fa fa-legal"></i><span>Sentencias</span></a></li>
 		</ul>
 	</li>

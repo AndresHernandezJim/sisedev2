@@ -61,7 +61,7 @@ class proyectistaController extends Controller
             $k->tiempo=$hora;
         }
         $data=array('mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,
-            'mensajes2'=>$men,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',1)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',1)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat
+            'mensajes2'=>$men,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',4)->where('estatus',1)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',4)->where('estatus',0)->select('id','Tipo')->orderby('Tipo','ASC')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat
         );
         //dd($data);
         return view('proyectista.notificaciones',$data);
@@ -217,7 +217,7 @@ class proyectistaController extends Controller
         }
         $data=array('exp'=>\DB::select('select v.id_expediente,v.expediente,v.fechasis,v.id_razonsocial,v.Demandado,v.id_demandante,v.Demandante,v.Resumen,e.serie from v_seguimiento v join expediente e on v.id_expediente=e.id'),
                 'rol'=>'actuario',
-                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',3)->where('estatus',0)->select('id','Tipo')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat);
+                'mensajes'=>\DB::table('mensajes')->where('usuario_destino',$id)->orderby('id','desc')->get(),'cant'=>$ca->cantidad,'tipoac'=>\DB::table('acuerdotipo')->where('nivel',4)->where('estatus',1)->select('id','Tipo')->get(),'tipoac2'=>\DB::table('acuerdotipo')->where('nivel',4)->where('estatus',0)->select('id','Tipo')->get(),'cchat'=>$cantch->cantidad,'mchat'=>$mchat);
        //dd($data);
         return view('proyectista.seguimiento',$data);
     }
@@ -332,7 +332,7 @@ class proyectistaController extends Controller
     public function ver($exp,Request $request){ //ver los proyectos redactados por expediente
         $id=$request->session()->get('id');
         //dd($id);
-        $proyectos=\DB::select("select p.id,p.id_exp,p.fecha_creacion,p.fecha_envio,p.estatus,p.numero,e.serie,e.expediente,p.id_proy as proyectista from proyectos p join expediente e on p.id_exp=e.id  where p.id_proy=? order by p.fecha_creacion DESC",[$id]);
+        $proyectos=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->select('p.id','p.id_exp','p.fecha_creacion','p.fecha_envio','p.estatus','p.numero','e.serie','e.expediente','p.id_proy as proyectista')->where('p.id_proy',$id)->where('p.id_exp',$exp)->get();
         foreach ($proyectos as $k) {
             if($k->fecha_envio==null){
                 $k->fecha_envio="No enviado";
@@ -410,9 +410,12 @@ class proyectistaController extends Controller
         // return json_encode($request->all());
         $id_us=$request->session()->get('id');
         //actualizar los mensajes del chat
-        $u=\DB::table('chat')->where('id_receptor',$id_us)->where('id_exp',$request->id_exp)->update(['estado'=>1]);
+        $chat2=\DB::table('chat')->where('id_exp',$request->id_exp)->where('id_proyecto',$request->id_pro)->where('id_receptor',$request->id_us)->get();
+        if(sizeof($chat2)!=0){
+             $u=\DB::table('chat')->where('id_receptor',$id_us)->where('id_exp',$request->id_exp)->update(['estado'=>1]);
+        }
         // creamos un nuevo mensaje del chat
-        $serie=\DB::table('expediente')->select('serie')->where('id_exp',$request->id_exp)->first();
+        $serie=\DB::table('expediente')->select('serie')->where('id',$request->id_exp)->first();
         $c=new chat;
         $c->id_origen=$id_us;
         $c->id_receptor=$request->receptor;
@@ -421,6 +424,7 @@ class proyectistaController extends Controller
         $c->fecha_creacion=date('Y-m-d H:i:s');
         $c->estado=0;
         $c->serie=$serie->serie;
+        $c->id_proyecto=$request->id_pro;
         $c->save();
         // obtenemos los mensajes y los retornamos
         $chat=\DB::select("select c.id as id_chat,c.id_origen,u.avatar as foto1,concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as origen,c.id_receptor,c.mensaje,c.estado,DATE_FORMAT(c.fecha_creacion,'%Y-%m-%d') as fecha,DATE_FORMAT(c.fecha_creacion,'%h:%i %p') as hora from chat as c join users u on c.id_origen=u.id where c.id_exp=?",[$request->id_exp]);
@@ -460,13 +464,15 @@ class proyectistaController extends Controller
             $hora=queryhelper::tohours($minutos,"");
             $k->tiempo=$hora;
         }
-        $creado=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->select('p.id','p.id_exp','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->where('p.enable','<>',0)->where('p.estatus',0)->orwhere('p.estatus',1)->orderby('p.id','DESC')->get();
+        $creado1=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->where('p.id_proy',$id)->where('enable','<>',0)->where('estatus',0)->select('p.id','p.id_exp','e.expediente','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio');
+        $creado=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->where('p.id_proy',$id)->where('enable','<>',0)->where('estatus',1)->select('p.id','p.id_exp','e.expediente','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->union($creado1)->get();
+        //dd($creado);
         foreach ($creado as $k) {
             if($k->fecha_envio==null){$k->fecha_envio="No Enviado";}
         }
-        $aprovado=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->select('p.id','p.id_exp','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->where('enable','<>',0)->where('estatus',3)->orderby('p.id','DESC')->get();
-        $recha=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->select('p.id','p.id_exp','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->where('enable','=',0)->where('estatus',4)->orderby('p.id','DESC')->get();
-        $revision=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->select('p.id','p.id_exp','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->where('enable','<>',0)->where('estatus',2)->orderby('p.id','DESC')->get();
+        $aprovado=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->where('p.id_proy',$id)->where('enable','<>',0)->where('estatus',3)->select('p.id','p.id_exp','e.expediente','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->orderBy('p.id','DESC')->get();
+        $recha=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->where('p.id_proy',$id)->where('enable',0)->where('estatus',4)->select('p.id','p.id_exp','e.expediente','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->orderBy('p.id','DESC')->get();
+        $revision=\DB::table('proyectos as p')->join('expediente as e','p.id_exp','e.id')->where('p.id_proy',$id)->where('enable','<>',0)->where('estatus',2)->select('p.id','p.id_exp','e.expediente','e.serie','p.fecha_creacion','p.estatus','p.numero','p.fecha_envio')->orderBy('p.id','DESC')->get();
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
         $rawmagi=\DB::raw("concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as magistrado");
         $magi=\DB::table('users as u')->join('role_user as r','r.user_id','u.id')->select('u.id',$rawmagi)->where('r.role_id',6)->get();
@@ -481,10 +487,10 @@ class proyectistaController extends Controller
         $fecha=date("Y-m-d H:i:s");
         $tipos=$request->tiposeguimiento;
         $id=$request->expediente;
-        $serie=$request->serie;
         $raw=\DB::raw('count(Folio) as cantidad');
         $folio=\DB::table('anexopdf')->select($raw)->where('id_Expediente',$id)->first();
-        $exp=\DB::table('expediente')->select('expediente')->where('id',$id)->first();
+        $exp=\DB::table('expediente')->select('expediente','serie')->where('id',$id)->first();
+        $serie=$request->serie;
         $exp=$exp->expediente;
         $folio=$folio->cantidad;
         $archivo=$request->pdf_file;
@@ -557,11 +563,11 @@ class proyectistaController extends Controller
         $seg->fecha=$fecha1;
         $seg->id_modulo=4;
         $seg->id_persona=$request->id_ac;
-        $seg->movimiento='Entrada';
+        $seg->movimiento='Re-Entrada';
         $seg->id_exp=$request->id_exp;
         $seg->id_anexo=null;
         $seg->id_Tseguimiento=$request->tiposeg;
-        $seg->comentarios="Se recibe el Expediente para Notificar";
+        $seg->comentarios="Se recibe el Expediente para Notificar Sentencia";
         $seg->save();
         $env=new envios;
         $env->id_exp=$request->id_exp;

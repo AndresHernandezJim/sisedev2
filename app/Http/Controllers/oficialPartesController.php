@@ -146,7 +146,7 @@ class oficialPartesController extends Controller
         $id=$request->session()->get('id');
         $ca=\DB::table('mensajes')->select(\DB::raw("count(id) as cantidad"))->where('usuario_destino',$id)->where("estatus",0)->first();
         $raw=\DB::raw("date_format(created_at,'%d/%m/%Y ') as fecha,timediff(now(),created_at) as tiempo");
-        $men=\DB::table('mensajes')->select('id','mensaje',$raw,'estatus')->where('usuario_destino',$id)->orderby('id','DESC')->get();
+        $men=\DB::table('mensajes')->select('id','mensaje',$raw,'estatus')->where('usuario_destino',$id)->orderby('id','fecha','DESC')->get();
         foreach ($men as $k) {
             $hora=$k->tiempo;
             list($horas, $minutos, $segundos) = explode(':', $hora);
@@ -610,7 +610,7 @@ class oficialPartesController extends Controller
         $archivo=$request->pdf_file;
         $folio2=$exp.'_'.$folio;
         $fecha=date("Y-m-d H:i:s");
-        $avatar=filehelper::uploadfile2($archivo,$exp,$serie);
+        $avatar=filehelper::uploadfile2($archivo[0],$exp,$serie);
         $anexo=new anexo;
         $anexo->id_Tipo=$request->id_tipo3;
         $anexo->Folio=$folio2;

@@ -13,7 +13,7 @@
 		<div class="box">
 			<div class="box-header"><center><b>Redactar Proyecto para el Expediente {{$exp}}/{{$serie}}</b></center></div>
 			<div class="box-body">
-				<form action="/proyectista/proyecto/guardar" method="post">
+				<form action="/proyectista/proyectos/guardar" method="post">
 					 {{ csrf_field() }}
 					<div class="row">
 						<div class="col-md-12">

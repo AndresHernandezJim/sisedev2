@@ -56,7 +56,6 @@ $(document).ready(function(){
 			
 	});
 	function validar(){
-		var correo=$('#haycorreo').val();
 		var nombre=$('#nombre').val();
 		var ap_pa=$('#a_paterno').val();
 		var tel=$('#tel').val();
@@ -67,13 +66,12 @@ $(document).ready(function(){
 		var colo=$('#colonia').val();
 		var mun=$('#municipio').val();
 		var ref=$('#refe').val();
-		if(correo!=1){
-			if(correo==2){
-				$('#email').focus();
-				notificar4();
-				return false;
-			}
-		}else if(nombre.length==0){
+		var hay=$('#haycorreo').val();
+		if(hay==2){
+			$('#email').focus();
+			notificar4();
+			return false;
+		}else  if(nombre.length==0){
 			$('#collapseTwo').collapse();
 			$('#nombre').focus();
 			notificar2('Nombre');
@@ -103,11 +101,16 @@ $(document).ready(function(){
 			$('#municipio').focus();
 			notificar3('Municipio')
 			return false;
-		}else 
+		}else if(ref.length==0){
+			$('#refe').focus();
+			notificar2('Referencias');
+			return false;
+		}else{
 			return true;
 		}
 		
 	}
+
 	function notificar2(campo){
 		ohSnap('El campo '+campo+' no puede estar vacio',{'color':'red',});
 	}

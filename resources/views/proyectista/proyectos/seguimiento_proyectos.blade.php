@@ -43,7 +43,7 @@
                         <tbody>
               						@foreach($creado as $k)
               						<tr>
-              							<td><center><a href="javascript:void(0)" title="Expediente {{$k->id_exp}}/{{$k->serie}}" class="btn bg-navy">{{$k->id_exp}}</a></center></td>
+              							<td><center><a href="javascript:void(0)" title="Expediente {{$k->expediente}}/{{$k->serie}}" class="btn bg-navy">{{$k->expediente}}</a></center></td>
               							<td><center>{{$k->numero}}</center></td>
               							<td><center>{{$k->fecha_envio}}</center></td>
               							<td><center>
@@ -81,7 +81,7 @@
                         <tbody>
 						@foreach($rev as $k)
 						<tr>
-							<td><center><a href="javascript:void(0)" title="Expediente {{$k->id_exp}}/{{$k->serie}}" class="btn  bg-navy">{{$k->id_exp}}</a></center></td>
+							<td><center><a href="javascript:void(0)" title="Expediente {{$k->expediente}}/{{$k->serie}}" class="btn  bg-navy">{{$k->expediente}}</a></center></td>
 							<td><center>{{$k->numero}}</center></td>
 							<td><center>{{$k->fecha_envio}}</center></td>
 							<td><center>
@@ -112,7 +112,7 @@
                         <tbody>
 						@foreach($acep as $k)
 						<tr>
-							<td><center><a href="javascript:void(0)" title="Expediente {{$k->id_exp}}/{{$k->serie}}" class="btn bg-navy">{{$k->id_exp}}</a></center></td>
+							<td><center><a href="javascript:void(0)" title="Expediente {{$k->expediente}}/{{$k->serie}}" class="btn bg-navy">{{$k->expediente}}</a></center></td>
 							<td><center>{{$k->numero}}</center></td>
 							<td><center>{{$k->fecha_envio}}</center></td>
 							<td><center>
@@ -141,16 +141,16 @@
                           </tr>
                         </thead>
                         <tbody>
-						@foreach($recha as $k)
-						<tr>
-							<td><center><a href="javascript:void(0)" title="Expediente {{$k->id_exp}}/{{$k->serie}}" class="btn  bg-navy">{{$k->id_exp}}</a></center></td>
-							<td><center>{{$k->numero}}</center></td>
-							<td><center>{{$k->fecha_envio}}</center></td>
-							<td><center>
-								<a href="/proyectista/proyectos/ver/{{$k->id}}_{{$k->id_exp}}" class="btn bg-purple"><i class="fa fa-eye"></i> Ver</a></center>
-							</td>
-						</tr>
-						@endforeach
+              						@foreach($recha as $k)
+              						<tr>
+              							<td><center><a href="javascript:void(0)" title="Expediente {{$k->expediente}}/{{$k->serie}}" class="btn  bg-navy">{{$k->expediente}}</a></center></td>
+              							<td><center>{{$k->numero}}</center></td>
+              							<td><center>{{$k->fecha_envio}}</center></td>
+              							<td><center>
+              								<a href="/proyectista/proyectos/ver/{{$k->id}}_{{$k->id_exp}}" class="btn bg-purple"><i class="fa fa-eye"></i> Ver</a></center>
+              							</td>
+              						</tr>
+              						@endforeach
                         </tbody>
                     </table>
                     </div>

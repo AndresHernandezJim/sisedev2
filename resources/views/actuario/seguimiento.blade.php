@@ -15,7 +15,9 @@
     <div class="col-md-12">
         <div class="box">
             <div class="box-header">
-                <center><h4><b>Seguimiento</b></h4></center>
+                <center>
+                    <h4><b>Seguimiento</b></h4>
+                </center>
             </div>
             <div class="box-body">
                 <input type="hidden" value="{{$rol}}" id="rol">
@@ -45,27 +47,25 @@
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="modal" id="myModalmostrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
-        <div class="modal-dialog">
-            <div class="modal-content modal-lg">
-                <div class="modal-body">
-                    <div class="col-sm-16">
-                        <div class="widget-box">
-                            <div class="widget-body">
-                                <div class="modal-body datagrid table-responsive" style="padding: 0px;">
-                                    <div class="panel-body" id="editar_resul" style="padding: 0px;">
-                                        <object id="object" type="application/pdf" data="" width="100%" height="550">
-                                        <param id="param" name="src" value="" />
-                                        </object>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>                            
+<div class="modal" id="myModalmostrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="col-sm-16">
+          <div class="widget-box">
+            <div class="widget-body">
+              <div class="panel-body" id="editar_resul" style="padding: 0px;">
+                <div class="col-md-12">
+                  <object id="object" type="application/pdf" data="" width="100%" height="600">
+                  <param id="param" name="src" value="" />
+                </object>
+                </div> 
+              </div>
             </div>
+          </div>
         </div>
+      </div>                            
+    </div>
   </div>
 </div>
 @endsection
