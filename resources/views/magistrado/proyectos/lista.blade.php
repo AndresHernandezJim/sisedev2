@@ -18,27 +18,27 @@
 			<div class="box-head"><center><h4><b>Expedientes con Proyecto de Sentencia</b></h4></center></div>
 			<div class="box-body">
 				<table class="table table-sm table-stripped table-bordered table-responsive" id="tabla" name="tabla">
-                    <thead>
-	                    <tr>
-	                      	<th>Expediente</th>
-	                        <th>Fecha</th>
-	                        <th>Demandando</th>
-	                        <th>Demandante</th>
-	                        <th></th>
-	                     </tr>
-                    </thead>
-                    <tbody>
-  						@foreach($exp as $k)
-  						<tr>
-  							<td><center><a href="#" class="btn btn-info" data-toggle="popover" data-placement="rigth" data-content="Expediente {{$k->expediente}}/{{$k->serie}}">{{$k->expediente}}</a><center></td>
-  							<td>{{$k->fecha}}</td>
-  							<td>{{$k->demandado}}</td>
-  							<td>{{$k->demandante}}</td>
-  							<td><a href="/magistrado/proyectos/expediente/{{$k->id}}" class="btn bg-orange btn-xs" data-toggle="popover" data-placement="left" data-content="Ver los Proyectos de sentencia realizados para el Expediente {{$k->expediente}}/{{$k->serie}}" title="Ver proyectos"><span class="glyphicon glyphicon-eye-open"></span> Ver proyectos</a></td>
-  						</tr>
-  						@endforeach
-                    </tbody>
-                    </table>
+          <thead>
+            <tr>
+              	<th>Expediente</th>
+                <th>Fecha</th>
+                <th>Demandando</th>
+                <th>Demandante</th>
+                <th></th>
+             </tr>
+          </thead>
+          <tbody>
+						@foreach($exp as $k)
+						<tr>
+							<td><center><a href="#" class="btn btn-info" data-toggle="popover" data-placement="rigth" data-content="Expediente {{$k->expediente}}/{{$k->serie}}">{{$k->expediente}}</a><center></td>
+							<td>{{$k->fecha}}</td>
+							<td>{{$k->demandado}}</td>
+							<td>{{$k->demandante}}</td>
+							<td><a href="/magistrado/proyectos/expediente/{{$k->id}}" class="btn bg-orange btn-xs" data-toggle="popover" data-placement="left" data-content="Ver los Proyectos de sentencia realizados para el Expediente {{$k->expediente}}/{{$k->serie}}" title="Ver proyectos"><span class="glyphicon glyphicon-eye-open"></span> Ver proyectos</a></td>
+						</tr>
+						@endforeach
+          </tbody>
+        </table>
 			</div>
 		</div>
 	</div>

@@ -110,8 +110,6 @@ Route::group(['middleware'=>'actuario'],function(){
 			Route::get('','actuarioController@seguimiento');
   			Route::get('anexos','actuarioController@getseguimiento');	
 		});
-		
-		
 		Route::any('perfil/{id}','actuarioController@perfil');
 		Route::get('getinvolved','actuarioController@getinvolved');
 		Route::post('notificar','actuarioController@notificar');
@@ -169,12 +167,25 @@ Route::group(['middleware'=>'magistrado'],function(){
 		Route::group(['prefix'=>'proyectos'],function(){
 			Route::get('','magistradoController@proyectos');
 			Route::get('expediente/{id}','magistradoController@proyexpe');
+			Route::get('expediente/{id1}/{id2}','magistradoController@ver');
+			Route::post('chat','magistradoController@addchat');
+		});
+		Route::group(['prefix'=>'acuerdos'],function(){
+			Route::get('','magistradoController@acuerdos');
+		});
+		//terminar cuando esté el módulo de amparos
+		Route::group(['prefix'=>'amparos'],function(){
+			Route::get('','magistradoController@amparos');
 		});
 		Route::get('eliminardocumento','magistradoController@deldocumento');
 		ROute::get('restaurardocumento','magistradoController@resdocumento');
 		Route::get('agregardocumento','magistradoController@adddocumento');
 		Route::get('gettipodoc','magistradoController@gettipodoc');
 		Route::get('actualizartipo','magistradoController@actualizartipo');
+		Route::group(['prefiix'=>'notificaciones'],function(){
+			Route::get('','magistradoController@notif');
+			Route::post('/update','magistradoController@updatenotif');
+		});
 		
 	});
 

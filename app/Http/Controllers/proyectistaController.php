@@ -427,7 +427,7 @@ class proyectistaController extends Controller
         $c->id_proyecto=$request->id_pro;
         $c->save();
         // obtenemos los mensajes y los retornamos
-        $chat=\DB::select("select c.id as id_chat,c.id_origen,u.avatar as foto1,concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as origen,c.id_receptor,c.mensaje,c.estado,DATE_FORMAT(c.fecha_creacion,'%Y-%m-%d') as fecha,DATE_FORMAT(c.fecha_creacion,'%h:%i %p') as hora from chat as c join users u on c.id_origen=u.id where c.id_exp=?",[$request->id_exp]);
+        $chat=\DB::select("select c.id as id_chat,c.id_origen,u.avatar as foto1,concat(u.nombre,' ',u.a_paterno,' ',u.a_materno) as origen,c.id_receptor,c.mensaje,c.estado,DATE_FORMAT(c.fecha_creacion,'%Y-%m-%d') as fecha,DATE_FORMAT(c.fecha_creacion,'%h:%i %p') as hora from chat as c join users u on c.id_origen=u.id where c.id_exp=? and c.id_proyecto=?",[$request->id_exp,$request->id_pro]);
         return json_encode($chat);
     }
     public function nuevoproy($id_exp,Request $request){//opcion agregar un nuevo proyecto (numero>1)
@@ -519,17 +519,18 @@ class proyectistaController extends Controller
         return back()->with('exito2',true);
     }
     public function enviar(Request $request){//enviar el proyecto al magistrado para revision
-        // return json_encode($request->all());
+       //return json_encode($request->all());
         //actualizar estatus del proyecto a 1;
-        $p=\DB::table('proyectos')->where('id',$request->id_proy)->update(['estatus'=>1,'fecha_envio'=>date('Y-m-d H:i:s')]);
         $p2=\DB::table('proyectos as p')->join('expediente as e','e.id','p.id_exp')->select('p.id_exp','e.serie','p.numero','e.expediente')->where('p.id',$request->id_proy)->first();
+        // return json_encode($p2);
         $us=\DB::table('users')->select(\DB::raw("concat(nombre,' ',a_paterno,' ',a_materno) as nombre"))->where('id',$request->id_mag)->first();
         //crear notificacion de sistema tanto para el actuario como para el magistrado
+        $nombre=$us->nombre;
         $us=$request->session()->get('id');
         $m=new mensajes;
         $m->usuario_origen=$us;
         $m->usuario_destino=$us;
-        $m->mensaje="Has enviado el Proyecto de sentencia #".$p2->numero." del espediente ".$p2->expediente.'/'.$p2->serie." para revisión ";
+        $m->mensaje="Has enviado el Proyecto de sentencia #".$p2->numero." del expediente ".$p2->expediente.'/'.$p2->serie." para revisión ";
         $m->estatus=0;
         $m->created_at=date('Y-m-d H:i:s');
         $m->updated_at=null;
@@ -537,13 +538,14 @@ class proyectistaController extends Controller
         $m=new mensajes;
         $m->usuario_origen=$us;
         $m->usuario_destino=$request->id_mag;
-        $m->mensaje=" El Proyecto de sentencia #".$p2->numero." del espediente ".$p2->expediente.'/'.$p2->serie." esta preparado para revisión ";
+        $m->mensaje=" El Proyecto de sentencia #".$p2->numero." del expediente ".$p2->expediente.'/'.$p2->serie." esta preparado para revisión ";
         $m->estatus=0;
         $m->created_at=date('Y-m-d H:i:s');
         $m->updated_at=null;
         $m->save();
-        //retornar los datos del proyecto y el nombre del usuario para la notificacion
-        $data=array('proyecto'=>$p2,'usuario'=>$us->nombre);
+        //retornar los datos del proyecto y el nombre del usuario para la notificacion  //revisar esta seccion
+        $data=array('proyecto'=>$p2,'usuario'=>$nombre);
+        $p=\DB::table('proyectos')->where('id',$request->id_proy)->update(['estatus'=>1,'fecha_envio'=>date('Y-m-d H:i:s')]);
         return json_encode($data);
     }
     public function notificar(Request $request){ //enviar el expediente al actuario para notificar

@@ -55,7 +55,7 @@ class User extends Authenticatable
     }
     public function getNameAttribute()
     {
-        return $this->name.' '.$this->midname;
+        return $this->nombre.' '.$this->a_paterno.' '.$this->a_materno;
     }
 
     public function getid(){

@@ -42,8 +42,8 @@
             </span></a>
 		<ul class="treeview-menu">
 			<li><a href="/magistrado/demanda"><i class="fa fa-list"></i><span>Demandas en curso</span></a></li>
-			<li><a href="#"><i class="fa fa-file-text"></i><span>Acuerdos en curso</span></a></li>
-			<li><a href="#"><i class="fa fa-file-zip-o"></i><span>Amparos en Curso</span></a></li>
+			<li><a href="/magistrado/acuerdos"><i class="fa fa-file-text"></i><span>Acuerdos en curso</span></a></li>
+			<li><a href="/magistrado/amparos"><i class="fa fa-file-zip-o"></i><span>Amparos en Curso</span></a></li>
 		</ul>
 	</li>
 	<li class="treeview"><a href=""><i class="fa fa-gears"></i><span>Proyectos activos</span><span class="pull-right-container">
@@ -54,7 +54,7 @@
 			<li><a href="#"><i class="fa fa-legal"></i><span>Sentencias</span></a></li>
 		</ul>
 	</li>
-	<li><a href="#"><i class="fa fa-envelope"></i><span>Notificaciones</span></a></li>
+	<li><a href="/magistrado/notificaciones"><i class="fa fa-envelope"></i><span>Notificaciones</span></a></li>
 	<li><a href="#"><i class="fa fa-dashboard"></i><span>Estadísticas</span></a></li>
 	<li class="treeview">
 	  <a href="#">

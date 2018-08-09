@@ -60,7 +60,7 @@
                   @foreach($mchat as $k)
 
                   <li><!-- start message -->
-                    <a href="#">
+                    <a href="/magistrado/proyectos/expediente/{{$k->id_exp}}/{{$k->id_proyecto}}">
                       <div class="pull-left">
                         <img src="{{$k->avatar}}" class="img-circle" alt="{{$k->remitente}}">
                       </div>
@@ -81,6 +81,6 @@
                   <!-- end message -->
                 </ul>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+             
             </ul>
 @endif   

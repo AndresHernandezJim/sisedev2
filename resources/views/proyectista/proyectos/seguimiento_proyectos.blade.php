@@ -289,6 +289,7 @@ function enviar2(){
     data:{id_proy:idproy,id_mag:id_mag},
     success:function(data){
       data=JSON.parse(data);
+      console.log(data);
       $('#exampleModal').modal('hide');
       ohSnap('El proyecto #'+data.proyecto.numero+" se ha enviado a "+data.usuario+" para revision",{'color':'green'});
       $('#btn_enviar').attr("disabled", true);
